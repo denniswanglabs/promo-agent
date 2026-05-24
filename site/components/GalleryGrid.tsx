@@ -20,6 +20,13 @@ const BRANDS: Brand[] = [
   },
   { slug: "openai", name: "OpenAI", url: "openai.com", category: "dev-ai" },
   { slug: "cursor", name: "Cursor", url: "cursor.com", category: "dev-ai" },
+  { slug: "replit", name: "Replit", url: "replit.com", category: "dev-ai" },
+  {
+    slug: "supabase",
+    name: "Supabase",
+    url: "supabase.com",
+    category: "dev-ai",
+  },
   {
     slug: "benchling",
     name: "Benchling",

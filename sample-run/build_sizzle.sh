@@ -8,7 +8,7 @@ TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
 
 # Order chosen for visual variety: dev/AI first, outreach second
-BRANDS=(stripe linear vercel anthropic openai cursor benchling trayd jgb kolr)
+BRANDS=(stripe linear vercel anthropic openai cursor replit supabase benchling trayd kolr)
 
 # Each clip is 3 seconds, sampled from mid (frame ~15s of source 30s)
 i=0

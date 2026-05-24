@@ -2,6 +2,7 @@ import { GalleryGrid } from "@/components/GalleryGrid";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { PolicySection } from "@/components/PolicySection";
 import { SizzleReel } from "@/components/SizzleReel";
+import { MetaPromo } from "@/components/MetaPromo";
 
 const GITHUB_URL = "https://github.com/denniswanglabs/promo-agent";
 
@@ -55,6 +56,13 @@ export default function Home() {
             <Stat label="scenes" value="5" />
             <Stat label="LLM calls" value="1" />
           </div>
+        </div>
+      </section>
+
+      {/* Meta-promo — the agent's promo of itself */}
+      <section className="border-b border-nv-border">
+        <div className="max-w-6xl mx-auto px-6 py-24">
+          <MetaPromo />
         </div>
       </section>
 

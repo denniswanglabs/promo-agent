@@ -49,10 +49,10 @@ export function SizzleReel() {
         <div className="p-8 flex flex-col justify-between gap-6">
           <div>
             <div className="text-xs uppercase tracking-wider text-nv-green font-mono mb-3">
-              27-sec montage
+              33-sec montage
             </div>
             <h3 className="text-2xl font-bold mb-3">
-              Nine brands, one click.
+              Eleven brands, one click.
             </h3>
             <p className="text-sm text-nv-muted leading-relaxed">
               Three seconds from each render, stitched into a single sizzle
@@ -61,10 +61,10 @@ export function SizzleReel() {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-            <Pill label="brands" value="9" />
-            <Pill label="duration" value="0:27" />
+            <Pill label="brands" value="11" />
+            <Pill label="duration" value="0:33" />
             <Pill label="cost" value="$0" />
-            <Pill label="wall time" value="~18m" />
+            <Pill label="wall time" value="~24m" />
           </div>
         </div>
       </div>

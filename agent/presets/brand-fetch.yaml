@@ -34,5 +34,12 @@ network_policies:
       - { host: cursor.com, port: 443, access: full }
       - { host: www.cursor.com, port: 443, access: full }
       - { host: cursor.sh, port: 443, access: full }
+      - { host: replit.com, port: 443, access: full }
+      - { host: www.replit.com, port: 443, access: full }
+      - { host: posthog.com, port: 443, access: full }
+      - { host: www.posthog.com, port: 443, access: full }
+      - { host: supabase.com, port: 443, access: full }
+      - { host: www.supabase.com, port: 443, access: full }
+      - { host: promo-agent-kappa.vercel.app, port: 443, access: full }
     binaries:
       - { path: "/**" }
