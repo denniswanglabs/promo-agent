@@ -1,0 +1,11 @@
+{
+  "timestamp": "20260524-204424",
+  "since": "60m",
+  "label": "setup-smoke",
+  "mp4_bytes": 0,
+  "transcript_lines": 201,
+  "higgsfield_credits_at_capture": "unknown",
+  "captured_at": "2026-05-24T12:44:27Z",
+  "review_status": "reviewed",
+  "verdict": "smoke test only \u2014 pipeline OK, no real render"
+}

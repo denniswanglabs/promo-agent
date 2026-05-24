@@ -1,0 +1,45 @@
+# brand-fetch — wildcard HTTPS GET access for fetch_brand.py.
+# NOTE: this is permissive. In a security-conscious deployment, replace with
+# per-brand domain entries (e.g. benchling.com, kolr.ai, buildtrayd.com).
+# For the hackathon demo we want URL→MP4 to work for ANY brand the user supplies.
+
+preset:
+  name: brand-fetch
+  description: "Permissive HTTPS GET for fetch_brand.py (any brand URL)"
+
+network_policies:
+  brand-fetch:
+    name: brand-fetch
+    endpoints:
+      - host: benchling.com
+        port: 443
+        access: full
+      - host: www.benchling.com
+        port: 443
+        access: full
+      - host: kolr.ai
+        port: 443
+        access: full
+      - host: www.kolr.ai
+        port: 443
+        access: full
+      - host: buildtrayd.com
+        port: 443
+        access: full
+      - host: www.buildtrayd.com
+        port: 443
+        access: full
+      - host: cumie.app
+        port: 443
+        access: full
+      - host: www.cumie.app
+        port: 443
+        access: full
+      - host: jgbproperty.com
+        port: 443
+        access: full
+      - host: www.jgbproperty.com
+        port: 443
+        access: full
+    binaries:
+      - { path: "/**" }

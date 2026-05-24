@@ -1,0 +1,22 @@
+preset:
+  name: debian-mirror
+  description: "Debian package mirror for direct .deb downloads (no apt)"
+
+network_policies:
+  debian-mirror:
+    name: debian-mirror
+    endpoints:
+      - host: deb.debian.org
+        port: 443
+        access: full
+      - host: deb.debian.org
+        port: 80
+        access: full
+      - host: security.debian.org
+        port: 443
+        access: full
+      - host: snapshot.debian.org
+        port: 443
+        access: full
+    binaries:
+      - { path: "/**" }

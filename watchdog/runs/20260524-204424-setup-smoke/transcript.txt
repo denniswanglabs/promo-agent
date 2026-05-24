@@ -1,0 +1,201 @@
+Warning: log buffer contains only the last 200 lines; --since results may be incomplete.
+[1779626060.022] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626060.448] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626079.490] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626091.460] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626091.724] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626092.237] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626092.265] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626092.265] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626104.493] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626104.493] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626112.190] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626112.558] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626122.340] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626122.752] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626128.835] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626128.835] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626129.496] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626129.496] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626153.365] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626153.851] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626154.498] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626154.498] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626159.541] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626159.541] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626159.616] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626159.616] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626172.039] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626172.314] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626179.500] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626185.628] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626185.953] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626204.503] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626216.902] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626217.176] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626229.508] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626229.508] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626232.067] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626232.671] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626234.281] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626234.281] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626248.591] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626249.026] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626254.509] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626270.147] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626270.148] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626279.511] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626279.511] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626279.807] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626280.395] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626292.183] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626292.897] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626299.371] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626299.372] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626304.513] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626304.513] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626311.124] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626311.552] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626329.513] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626329.513] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626342.352] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626342.842] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626345.054] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626345.054] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626352.251] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626352.900] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626354.515] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626354.515] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626373.692] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626374.440] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626379.517] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626379.517] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626387.814] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626387.814] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626404.513] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626404.513] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626405.721] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626406.104] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626412.033] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626412.504] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626429.520] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626429.520] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626436.796] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626437.171] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626454.521] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626454.521] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626467.890] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626468.512] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626472.144] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626472.395] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626474.691] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626474.719] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(34)
+[1779626474.913] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626474.934] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626474.938] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626474.938] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626478.748] [sandbox] [WARN ] [openshell_sandbox::ssh] channel_eof on unknown channel ChannelId(34)
+[1779626479.520] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626495.356] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626495.478] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626495.478] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626499.288] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626499.666] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626504.521] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626504.922] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626505.387] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626505.394] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626505.451] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626505.451] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626505.929] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(35)
+[1779626506.033] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626506.033] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626506.033] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626506.883] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626506.883] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626509.940] [sandbox] [WARN ] [openshell_sandbox::ssh] channel_eof on unknown channel ChannelId(35)
+[1779626515.714] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626515.804] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626515.804] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626516.699] [sandbox] [OCSF ] [ocsf] NET:FAIL [LOW] [msg:Proxy connection error: Broken pipe (os error 32)]
+[1779626518.797] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626519.458] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626519.988] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626519.988] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626519.988] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626519.988] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626520.037] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626520.037] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626520.037] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626520.037] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626520.037] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626520.037] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626521.058] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626521.058] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626521.058] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626521.059] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626521.059] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626521.076] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(36)
+[1779626521.077] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(37)
+[1779626521.149] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(36)
+[1779626525.135] [sandbox] [WARN ] [openshell_sandbox::ssh] channel_eof on unknown channel ChannelId(37)
+[1779626525.158] [sandbox] [WARN ] [openshell_sandbox::ssh] channel_eof on unknown channel ChannelId(36)
+[1779626529.523] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626529.523] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626530.760] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626531.111] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626531.937] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626532.402] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626539.930] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626540.033] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626540.033] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626549.694] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626549.799] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626549.799] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626554.525] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626554.525] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626562.007] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626562.417] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626579.527] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626579.527] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626581.608] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626581.801] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626581.802] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626591.859] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626592.391] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626593.316] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626593.590] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626594.422] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626594.632] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED inference.local:443
+[1779626594.632] [sandbox] [INFO ] [openshell_router] routing proxy inference request (streaming) endpoint=https://integrate.api.nvidia.com/v1 method=POST path=/v1/chat/completions protocols=openai_chat_completions,openai_completions,openai_responses,model_discovery
+[1779626604.528] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626624.708] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626625.100] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]
+[1779626629.531] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626629.531] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626632.875] [gateway] [INFO ] [openshell_server::supervisor_session] supervisor session: relay opened successfully
+[1779626632.875] [gateway] [INFO ] [openshell_server::grpc::sandbox] ExecSandbox (relay): command started
+[1779626633.058] [gateway] [INFO ] [openshell_server::supervisor_session] supervisor session: relay opened successfully
+[1779626633.058] [gateway] [INFO ] [openshell_server::grpc::sandbox] ExecSandbox (relay): command started
+[1779626632.874] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] [msg:ssh relay open (channel_id=8a9f62f4-92e7-4c2f-80c4-9e2efd5ae4fb, target=unix:/run/openshell/ssh.sock)]
+[1779626632.874] [sandbox] [OCSF ] [ocsf] SSH:OPEN [INFO] ALLOWED
+[1779626632.878] [sandbox] [OCSF ] [ocsf] CONFIG:APPLYING [INFO] Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:7 rw:6]
+[1779626632.878] [sandbox] [OCSF ] [ocsf] CONFIG:BUILT [INFO] Landlock ruleset built [rules_applied:12 skipped:1]
+[1779626632.886] [sandbox] [OCSF ] [ocsf] NET:CLOSE [INFO] [msg:ssh relay closed (channel_id=8a9f62f4-92e7-4c2f-80c4-9e2efd5ae4fb, target=unix:/run/openshell/ssh.sock)]
+[1779626633.056] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] [msg:ssh relay open (channel_id=426da58b-a3c4-40a9-8e87-de4c5c050273, target=unix:/run/openshell/ssh.sock)]
+[1779626633.057] [sandbox] [OCSF ] [ocsf] SSH:OPEN [INFO] ALLOWED
+[1779626633.061] [sandbox] [OCSF ] [ocsf] CONFIG:APPLYING [INFO] Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:7 rw:6]
+[1779626633.061] [sandbox] [OCSF ] [ocsf] CONFIG:BUILT [INFO] Landlock ruleset built [rules_applied:12 skipped:1]
+[1779626633.068] [sandbox] [OCSF ] [ocsf] NET:CLOSE [INFO] [msg:ssh relay closed (channel_id=426da58b-a3c4-40a9-8e87-de4c5c050273, target=unix:/run/openshell/ssh.sock)]
+[1779626633.238] [gateway] [INFO ] [openshell_server::supervisor_session] supervisor session: relay opened successfully
+[1779626633.238] [gateway] [INFO ] [openshell_server::grpc::sandbox] ExecSandbox (relay): command started
+[1779626633.237] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] [msg:ssh relay open (channel_id=eb129ddf-1ad8-494d-8313-7d4fe3f5bb68, target=unix:/run/openshell/ssh.sock)]
+[1779626633.237] [sandbox] [OCSF ] [ocsf] SSH:OPEN [INFO] ALLOWED
+[1779626633.242] [sandbox] [OCSF ] [ocsf] CONFIG:APPLYING [INFO] Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:7 rw:6]
+[1779626633.243] [sandbox] [OCSF ] [ocsf] CONFIG:BUILT [INFO] Landlock ruleset built [rules_applied:12 skipped:1]
+[1779626633.251] [sandbox] [OCSF ] [ocsf] NET:CLOSE [INFO] [msg:ssh relay closed (channel_id=eb129ddf-1ad8-494d-8313-7d4fe3f5bb68, target=unix:/run/openshell/ssh.sock)]
+[1779626652.061] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626652.403] [sandbox] [OCSF ] [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.telegram.org:443/bot[CREDENTIAL]/getMe [policy:telegram_bot engine:l7]
+[1779626654.535] [sandbox] [WARN ] [openshell_sandbox::ssh] data on unknown channel ChannelId(31)
+[1779626655.816] [sandbox] [OCSF ] [ocsf] NET:OPEN [INFO] ALLOWED /usr/local/bin/node(329) -> api.telegram.org:443 [policy:telegram_bot engine:opa]
+[1779626656.332] [sandbox] [OCSF ] [ocsf] HTTP:POST [INFO] ALLOWED POST http://api.telegram.org:443/bot[CREDENTIAL]/getUpdates [policy:telegram_bot engine:l7]

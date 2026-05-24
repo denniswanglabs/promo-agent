@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+.cache/
+out/
+
+# Secrets — NEVER commit
+.env
+.env.local
+.env.*.local
+credentials.json
+*.token
+*.key
+*-creds.json
+
+# Generated Remotion assets and MP4s
+sample-run/*.mp4
+sample-run/out*.mp4
+sample-run/host-render/
+sample-run/kinetic-frames/
+sample-run/benchling-frames/
+
+# Watchdog runtime data
+watchdog/runs/*/out.mp4
+watchdog/runs/*/frames/
+watchdog/sandbox-mount/
+watchdog/FINDINGS.md
+
+# Local scratch
+*.log
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS
+Thumbs.db
+ehthumbs.db

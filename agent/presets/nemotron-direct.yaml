@@ -1,0 +1,13 @@
+preset:
+  name: nemotron-direct
+  description: "Direct curl access to NVIDIA Nemotron API (for the promo make_promo.sh script)"
+
+network_policies:
+  nemotron-direct:
+    name: nemotron-direct
+    endpoints:
+      - host: integrate.api.nvidia.com
+        port: 443
+        access: full
+    binaries:
+      - { path: "/**" }

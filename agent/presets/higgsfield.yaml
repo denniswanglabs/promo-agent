@@ -1,0 +1,39 @@
+# Higgsfield API access for the promo-agent sandbox.
+# Allows the agent to generate images/video via Higgsfield's CLI + API.
+# Asset download domains (Cloudflare CDN for generated media) are also listed
+# so the agent can fetch finished images/MP4s back into the sandbox.
+
+preset:
+  name: higgsfield
+  description: "Higgsfield AI API + asset CDN for image/video generation"
+
+network_policies:
+  higgsfield:
+    name: higgsfield
+    endpoints:
+      - host: api.higgsfield.ai
+        port: 443
+        access: full
+      - host: fnf.higgsfield.ai
+        port: 443
+        access: full
+      - host: fnf-device-auth.higgsfield.ai
+        port: 443
+        access: full
+      - host: higgsfield.ai
+        port: 443
+        access: full
+      - host: cdn.higgsfield.ai
+        port: 443
+        access: full
+      - host: assets.higgsfield.ai
+        port: 443
+        access: full
+      - host: media.higgsfield.ai
+        port: 443
+        access: full
+      - host: d8j0ntlcm91z4.cloudfront.net
+        port: 443
+        access: full
+    binaries:
+      - { path: "/**" }
