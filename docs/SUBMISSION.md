@@ -28,6 +28,10 @@ A declarative policy file (`agent/policy.yaml`) enforces tool scope, network all
 
 `https://github.com/denniswanglabs/promo-agent`
 
+## Landing page / 專案網站
+
+`https://promo-agent-kappa.vercel.app` — interactive gallery of nine real-brand renders, 27-second sizzle reel, architecture diagram, NemoClaw policy walk-through.
+
 ---
 
 ## Demo 影片連結 / Link to your Demo Video

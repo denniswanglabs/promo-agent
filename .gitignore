@@ -24,6 +24,20 @@ sample-run/out*.mp4
 sample-run/host-render/
 sample-run/kinetic-frames/
 sample-run/benchling-frames/
+sample-run/gallery/           # canonical copies live in site/public/gallery/
+
+# Site
+site/node_modules/
+site/.next/
+site/out/
+site/.vercel/
+site/.pnpm-store/
+
+# WIP scratch (Dennis-owned, not part of overnight gallery work)
+demo-explainer-loop/
+agent/instructions.md
+agent/skills/meta/
+agent/presets/playwright-cdn.yaml
 
 # Watchdog runtime data
 watchdog/runs/*/out.mp4

@@ -4,6 +4,8 @@
 
 **Submission for NVIDIA GTC Taipei 2026 Hackathon.**
 
+**Live demo:** [promo-agent-kappa.vercel.app](https://promo-agent-kappa.vercel.app) — interactive gallery of nine real-brand renders, 27-second sizzle reel, architecture diagram, and NemoClaw policy walk-through.
+
 ---
 
 ## What it does

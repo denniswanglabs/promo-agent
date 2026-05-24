@@ -83,12 +83,15 @@ if [ -z "${NVIDIA_API_KEY:-}" ]; then
   exit 1
 fi
 
-SYSTEM_PROMPT='You produce CompositionSpec JSON for kinetic-typography promo videos. Given fetched brand data, output ONLY a single JSON object — no preamble, no markdown code fences:
+SYSTEM_PROMPT='detailed thinking off
+
+You produce CompositionSpec JSON for kinetic-typography promo videos. Given fetched brand data, output ONLY a single JSON object — no preamble, no markdown code fences, no reasoning prose:
 
 {
   "template": "kinetic-30s",
   "total_duration_f": 900,
   "palette": {"primary": "#XXXXXX", "accent": "#XXXXXX"},
+  "music": {"track": "anthem | corporate | warm | tense"},
   "scenes": [
     {
       "act": 1,
@@ -98,8 +101,7 @@ SYSTEM_PROMPT='You produce CompositionSpec JSON for kinetic-typography promo vid
       "asset_brief": "kinetic_text",
       "asset_type": "kinetic_text"
     }
-  ],
-  "music_brief": "lo-fi corporate, hopeful"
+  ]
 }
 
 Rules:
@@ -108,6 +110,7 @@ Rules:
 - Include at least one social_proof scene IF the brand data has a named customer quote
 - duration_f values sum to exactly 900
 - palette.primary = first hex from the PALETTE section; palette.accent = a contrasting hex from the same section
+- music.track must be exactly one of: anthem (SaaS cinematic, dev tools), corporate (B2B, enterprise), warm (consumer, mission-driven, design-led), tense (security, compliance, urgency). Pick based on the brand vibe in the fetched data.
 - copy lines must ground in the fetched data — no invented stats, no fabricated quotes
 - Forbidden words: revolutionary, game-changing, world-class, cutting-edge, next-gen, transformative
 - Output ONLY the JSON object, nothing else'
@@ -123,7 +126,7 @@ jq -n \
       {role: "system", content: $system},
       {role: "user", content: $user}
     ],
-    max_tokens: 2048,
+    max_tokens: 4096,
     temperature: 0.4
   }' > "$REQUEST_BODY"
 
@@ -144,6 +147,38 @@ fi
 
 SPEC_RAW=$(jq -r '.choices[0].message.content' "$RESPONSE_FILE")
 SPEC_JSON=$(echo "$SPEC_RAW" | sed -E '/^```[a-z]*$/d; /^```$/d')
+
+# Fallback: if model leaked reasoning, extract the largest {...} block
+if ! echo "$SPEC_JSON" | jq -e '.scenes | length > 0' > /dev/null 2>&1; then
+  EXTRACTED=$(echo "$SPEC_RAW" | python3 -c '
+import sys, json
+text = sys.stdin.read()
+best = ""
+depth = 0
+start = -1
+for i, c in enumerate(text):
+    if c == "{":
+        if depth == 0:
+            start = i
+        depth += 1
+    elif c == "}":
+        depth -= 1
+        if depth == 0 and start >= 0:
+            candidate = text[start:i+1]
+            try:
+                obj = json.loads(candidate)
+                if isinstance(obj, dict) and "scenes" in obj and len(candidate) > len(best):
+                    best = candidate
+            except Exception:
+                pass
+            start = -1
+print(best)
+' 2>/dev/null)
+  if [ -n "$EXTRACTED" ]; then
+    SPEC_JSON="$EXTRACTED"
+    echo "    (extracted JSON from reasoning prose)" >&2
+  fi
+fi
 
 # ---- 3. Validate + save spec ---------------------------------------------
 if [ -d /sandbox ] && [ -w /sandbox ]; then

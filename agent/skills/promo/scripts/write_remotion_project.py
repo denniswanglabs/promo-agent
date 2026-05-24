@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -178,6 +179,15 @@ def main():
     (src / "index.ts").write_text(INDEX_TS)
     (project_dir / "remotion.config.ts").write_text(CONFIG_TS)
     (project_dir / "tsconfig.json").write_text(TSCONFIG_JSON)
+
+    # Copy BGM tracks into Remotion public/audio/
+    if args.mode == "kinetic":
+        audio_src = template_dir / "audio"
+        audio_dst = project_dir / "public" / "audio"
+        audio_dst.mkdir(parents=True, exist_ok=True)
+        if audio_src.exists():
+            for f in audio_src.glob("*.mp3"):
+                shutil.copy2(f, audio_dst / f.name)
 
     print(f"wrote {args.mode} Remotion project under {src}")
 

@@ -1,27 +1,37 @@
 ---
 name: promo
-description: Use when asked to make a promo video for a URL, create a promo for a company, render a brand video, or any request to produce a promo MP4 from a company URL. Examples - "make a promo for buildtrayd.com", "create a promo video for https://benchling.com", "video for kolr.ai", "render a kinetic promo for [company]".
+description: Use when asked to make/create/generate a promo video for a company URL.
 ---
 
-# Promo — URL to MP4 in one shell call
+# How to make a promo
 
-When asked to make a promo video for a URL, call exactly ONE tool:
+You will use ONE tool: `openclaw:core:exec`. You will call it DIRECTLY as a tool invocation, NOT inside `tool_search_code`, NOT inside any JavaScript wrapper.
 
-  openclaw:core:exec
-  with command:
-    bash /sandbox/.openclaw/skills/promo/scripts/make_promo.sh "<THE_URL>"
+## Step 1 — kick off the render
 
-That script:
-- Fetches the brand site
-- Calls Nemotron to compose a CompositionSpec
-- Renders a kinetic-typography MP4 via Remotion
-- Returns in 2-3 minutes with the MP4 at /sandbox/out.mp4
+Call `openclaw:core:exec` directly (not via tool_search_code) with these parameters:
 
-Report:
-- The output MP4 path
-- The file size (run: `ls -lh /sandbox/out.mp4`)
-- Any warnings from stderr
+```
+tool: openclaw:core:exec
+command: bash /sandbox/.openclaw/skills/promo/scripts/start_promo.sh <THE_URL> /sandbox/out.mp4
+```
 
-Do not call any other tools. Do not inspect the script before running it. Do not poll status during the run — the script runs synchronously and prints progress. The single openclaw:core:exec call will return when done (or with an error).
+This command returns in under 2 seconds. It backgrounds the actual render. The response will say "STARTED" with an expected completion time.
 
-If the script fails, report the last 20 lines of its stderr to the user. Do not retry.
+## Step 2 — wait for the MP4 (poll once or twice)
+
+After ~90 seconds, call `openclaw:core:exec` directly again with:
+
+```
+tool: openclaw:core:exec
+command: bash /sandbox/.openclaw/skills/promo/scripts/wait_promo.sh 30
+```
+
+`wait_promo.sh` polls for up to 30 seconds and returns. If the response is `PENDING`, call it once more. If `DONE`, you have the MP4.
+
+## Important
+
+- DO NOT wrap `openclaw:core:exec` inside `tool_search_code`.
+- DO NOT write JavaScript that calls `openclaw.tools.call(...)`.
+- Call `openclaw:core:exec` directly as a top-level tool invocation.
+- Each call returns in under 30 seconds — no JS sandbox timeout.

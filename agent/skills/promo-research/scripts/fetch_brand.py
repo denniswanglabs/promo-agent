@@ -46,7 +46,11 @@ def fetch(url: str) -> str:
 
     req = urllib.request.Request(
         url,
-        headers={"User-Agent": "PromoAgent/0.1 (+https://github.com/dennis/promo-agent)"},
+        headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+        },
     )
     with urllib.request.urlopen(req, timeout=20) as resp:
         charset = resp.headers.get_content_charset() or "utf-8"

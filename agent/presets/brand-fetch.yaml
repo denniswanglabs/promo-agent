@@ -1,45 +1,38 @@
-# brand-fetch — wildcard HTTPS GET access for fetch_brand.py.
-# NOTE: this is permissive. In a security-conscious deployment, replace with
-# per-brand domain entries (e.g. benchling.com, kolr.ai, buildtrayd.com).
-# For the hackathon demo we want URL→MP4 to work for ANY brand the user supplies.
+# brand-fetch — explicit per-domain HTTPS GET access for fetch_brand.py.
+# Per-domain entries (not wildcards) keep the policy auditable.
 
 preset:
   name: brand-fetch
-  description: "Permissive HTTPS GET for fetch_brand.py (any brand URL)"
+  description: "HTTPS GET to known brand domains for fetch_brand.py"
 
 network_policies:
   brand-fetch:
     name: brand-fetch
     endpoints:
-      - host: benchling.com
-        port: 443
-        access: full
-      - host: www.benchling.com
-        port: 443
-        access: full
-      - host: kolr.ai
-        port: 443
-        access: full
-      - host: www.kolr.ai
-        port: 443
-        access: full
-      - host: buildtrayd.com
-        port: 443
-        access: full
-      - host: www.buildtrayd.com
-        port: 443
-        access: full
-      - host: cumie.app
-        port: 443
-        access: full
-      - host: www.cumie.app
-        port: 443
-        access: full
-      - host: jgbproperty.com
-        port: 443
-        access: full
-      - host: www.jgbproperty.com
-        port: 443
-        access: full
+      # Existing Luceo outreach pipeline
+      - { host: benchling.com, port: 443, access: full }
+      - { host: www.benchling.com, port: 443, access: full }
+      - { host: kolr.ai, port: 443, access: full }
+      - { host: www.kolr.ai, port: 443, access: full }
+      - { host: buildtrayd.com, port: 443, access: full }
+      - { host: www.buildtrayd.com, port: 443, access: full }
+      - { host: cumie.app, port: 443, access: full }
+      - { host: www.cumie.app, port: 443, access: full }
+      - { host: jgbproperty.com, port: 443, access: full }
+      - { host: www.jgbproperty.com, port: 443, access: full }
+      # Dev/AI infra gallery
+      - { host: stripe.com, port: 443, access: full }
+      - { host: www.stripe.com, port: 443, access: full }
+      - { host: linear.app, port: 443, access: full }
+      - { host: www.linear.app, port: 443, access: full }
+      - { host: vercel.com, port: 443, access: full }
+      - { host: www.vercel.com, port: 443, access: full }
+      - { host: anthropic.com, port: 443, access: full }
+      - { host: www.anthropic.com, port: 443, access: full }
+      - { host: openai.com, port: 443, access: full }
+      - { host: www.openai.com, port: 443, access: full }
+      - { host: cursor.com, port: 443, access: full }
+      - { host: www.cursor.com, port: 443, access: full }
+      - { host: cursor.sh, port: 443, access: full }
     binaries:
       - { path: "/**" }

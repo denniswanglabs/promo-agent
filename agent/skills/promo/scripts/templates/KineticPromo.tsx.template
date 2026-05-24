@@ -11,9 +11,11 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
   Sequence,
   interpolate,
   spring,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
   Easing,
@@ -643,8 +645,27 @@ export const KineticPromo: React.FC = () => {
     return { scene, start, duration };
   });
 
+  const musicTrack = (SPEC as any).music?.track ?? "corporate";
+
   return (
     <AbsoluteFill style={{ fontFamily: FONT_STACK }}>
+      <Audio
+        src={staticFile(`audio/${musicTrack}.mp3`)}
+        volume={(f) =>
+          interpolate(
+            f,
+            [
+              0,
+              30,
+              SPEC.total_duration_f - 45,
+              SPEC.total_duration_f,
+            ],
+            [0, 0.85, 0.85, 0],
+            { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+          )
+        }
+      />
+
       <AuroraBg />
 
       {sceneRanges.map(({ scene, start, duration }, idx: number) => {
@@ -657,13 +678,13 @@ export const KineticPromo: React.FC = () => {
         );
       })}
 
-      {/* Final fade to bg color (last 20 frames) */}
+      {/* Visual fade to black: 30f ending 15f before composition end (audio outlasts) */}
       <AbsoluteFill
         style={{
           background: "#000000",
           opacity: interpolate(
             frame,
-            [SPEC.total_duration_f - 20, SPEC.total_duration_f - 1],
+            [SPEC.total_duration_f - 45, SPEC.total_duration_f - 15],
             [0, 1],
             { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
           ),
