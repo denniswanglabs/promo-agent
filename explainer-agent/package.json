@@ -1,0 +1,13 @@
+{
+  "name": "explainer-agent",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "agent": "node agent.js",
+    "render": "cd remotion && npx remotion render Explainer ../out.mp4"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}

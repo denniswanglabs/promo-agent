@@ -1,0 +1,72 @@
+{
+  "goal": "Find the installation command for the Calendar component",
+  "startUrl": "https://ui.shadcn.com",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "actions": [
+    {
+      "step": 0,
+      "kind": "click",
+      "url": "https://ui.shadcn.com/",
+      "title": "The Foundation for your Design System - shadcn/ui",
+      "target": {
+        "tag": "a",
+        "text": "Components",
+        "aria": "",
+        "href": "/docs/components"
+      },
+      "click": {
+        "x": 165,
+        "y": 28,
+        "rect": {
+          "x": 111,
+          "y": 12,
+          "w": 108,
+          "h": 32
+        }
+      },
+      "description": "Click the 'Components' link to navigate to the components documentation",
+      "reasoning": "The installation command for the Calendar component is likely found within the components documentation. The 'Components' link (href=/docs/components) is not banned and will lead us to the list of components where we can locate Calendar and view its installation instructions.",
+      "screenshotBefore": "screenshots-sandbox/step_0_before.png",
+      "screenshotAfter": "screenshots-sandbox/step_0_after.png",
+      "changeKind": "url"
+    },
+    {
+      "step": 1,
+      "kind": "click",
+      "url": "https://ui.shadcn.com/docs/components",
+      "title": "Components - shadcn/ui",
+      "target": {
+        "tag": "a",
+        "text": "Calendar",
+        "aria": "",
+        "href": "/docs/components/radix/calendar"
+      },
+      "click": {
+        "x": 93,
+        "y": 453.59375,
+        "rect": {
+          "x": 56,
+          "y": 438.59375,
+          "w": 74,
+          "h": 30
+        }
+      },
+      "description": "Click the Calendar link to navigate to the Calendar component page",
+      "reasoning": "The Calendar component link at index 31 points to /docs/components/radix/calendar, which should contain the installation command for the Calendar component.",
+      "screenshotBefore": "screenshots-sandbox/step_1_before.png",
+      "screenshotAfter": "screenshots-sandbox/step_1_after.png",
+      "changeKind": "url"
+    },
+    {
+      "step": 2,
+      "kind": "done",
+      "url": "https://ui.shadcn.com/docs/components",
+      "title": "Components - shadcn/ui",
+      "screenshot": "screenshots-sandbox/step_1_after.png",
+      "reasoning": "synthetic done \u2014 reached goal page"
+    }
+  ]
+}

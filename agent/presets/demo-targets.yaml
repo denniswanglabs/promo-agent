@@ -1,0 +1,38 @@
+# Demo target sites for the explainer agent.
+# Whitelisted apps the agent is allowed to drive in feasibility runs.
+
+preset:
+  name: demo-targets
+  description: "Whitelisted demo web apps the explainer agent navigates"
+
+network_policies:
+  demo-targets:
+    name: demo-targets
+    endpoints:
+      - host: ui.shadcn.com
+        port: 443
+        access: full
+      - host: shadcn.com
+        port: 443
+        access: full
+      # shadcn assets sometimes load from Vercel's CDN
+      - host: assets.vercel.com
+        port: 443
+        access: full
+      # NVIDIA documentation portal — the agent navigates these for
+      # NemoClaw / Nemotron / NIM docs experiments.
+      - host: docs.nvidia.com
+        port: 443
+        access: full
+      - host: developer.nvidia.com
+        port: 443
+        access: full
+      # NVIDIA docs often pulls fonts + CSS from these:
+      - host: www.nvidia.com
+        port: 443
+        access: full
+      - host: images.nvidia.com
+        port: 443
+        access: full
+    binaries:
+      - { path: "/**" }

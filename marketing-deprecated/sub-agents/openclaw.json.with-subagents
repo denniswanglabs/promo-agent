@@ -10,6 +10,13 @@
     },
     "list": [
       {
+        "id": "main",
+        "description": "Primary orchestrator. Receives user requests, delegates specialist work to sub-agents via sessions_spawn, delivers final result.",
+        "model": {
+          "primary": "inference/nvidia/nemotron-3-super-120b-a12b"
+        }
+      },
+      {
         "id": "brand-classifier",
         "description": "Classifies brand_summary against the style library. Returns JSON: matched_style, confidence, optional suggested_new_style_seed. Spawned by main once per URL.",
         "model": {
@@ -105,7 +112,7 @@
     }
   },
   "tools": {
-    "toolSearch": true
+    "toolSearch": false
   },
   "update": {
     "checkOnStart": false

@@ -1,0 +1,9 @@
+{
+  "name": "explainer-render",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node_modules/.bin/remotion render Explainer ../out.mp4 --concurrency=8"
+  }
+}

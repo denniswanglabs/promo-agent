@@ -33,10 +33,27 @@ site/out/
 site/.vercel/
 site/.pnpm-store/
 
-# WIP scratch (Dennis-owned, not part of overnight gallery work)
-demo-explainer-loop/
-agent/instructions.md
-agent/skills/meta/
+# Explainer agent runtime (large MP4s + screenshot caches not in version control)
+explainer-agent/node_modules/
+explainer-agent/run/screenshots/
+explainer-agent/observe-host/public/
+
+# Per-render outputs (keep agent.js + remotion/ + scripts in git, not outputs)
+explainer-agent/out-*.mp4
+explainer-agent/contact-sheet-*.png
+explainer-agent/out.mp4
+
+# Marketing-deprecated artifacts (archived but not committed in bulk)
+marketing-deprecated/sample-run/*.mp4
+marketing-deprecated/sample-run/host-render/
+marketing-deprecated/sample-run/kinetic-frames/
+marketing-deprecated/sample-run/benchling-frames/
+marketing-deprecated/sample-run/gallery/
+marketing-deprecated/sub-agents/experiments/*.mp4
+marketing-deprecated/instructions.md
+marketing-deprecated/meta/
+
+# Sandbox path (cosmetic — was scratch)
 agent/presets/playwright-cdn.yaml
 
 # Watchdog runtime data

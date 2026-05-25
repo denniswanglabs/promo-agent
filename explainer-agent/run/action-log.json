@@ -1,0 +1,64 @@
+{
+  "goal": "Find the installation command for the Button component",
+  "startUrl": "https://ui.shadcn.com",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "actions": [
+    {
+      "step": 0,
+      "kind": "click",
+      "url": "https://ui.shadcn.com/",
+      "title": "The Foundation for your Design System - shadcn/ui",
+      "target": {
+        "tag": "a",
+        "text": "Components",
+        "aria": "",
+        "href": "/docs/components"
+      },
+      "click": {
+        "x": 161.01171875,
+        "y": 28,
+        "rect": {
+          "x": 109.3359375,
+          "y": 12,
+          "w": 103.3515625,
+          "h": 32
+        }
+      },
+      "description": "Click the Components link to navigate to the components overview page",
+      "reasoning": "To find the installation command for the Button component, we need to locate the Button component documentation, which is listed under the Components section. Clicking the Components link will take us to the components directory where we can then select Button and view its installation instructions.",
+      "screenshotBefore": "run/screenshots/step_0_before.png",
+      "screenshotAfter": "run/screenshots/step_0_after.png",
+      "model": "nvidia/nemotron-3-super-120b-a12b"
+    },
+    {
+      "step": 1,
+      "kind": "click",
+      "url": "https://ui.shadcn.com/docs/components",
+      "title": "Components - shadcn/ui",
+      "target": {
+        "tag": "a",
+        "text": "Button",
+        "aria": "",
+        "href": "/docs/components/radix/button"
+      },
+      "click": {
+        "x": 84.984375,
+        "y": 453.59375,
+        "rect": {
+          "x": 56,
+          "y": 438.59375,
+          "w": 57.96875,
+          "h": 30
+        }
+      },
+      "description": "Click Button component link",
+      "reasoning": "Navigate to the Button component documentation page where the installation command is likely displayed.",
+      "screenshotBefore": "run/screenshots/step_1_before.png",
+      "screenshotAfter": "run/screenshots/step_1_after.png",
+      "model": "nvidia/nemotron-3-super-120b-a12b"
+    }
+  ]
+}
