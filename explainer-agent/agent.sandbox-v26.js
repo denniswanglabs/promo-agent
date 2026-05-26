@@ -744,7 +744,8 @@ async function trySearchScout(context, goalPhrase, startUrl, { roundIdx = 0, bea
     page = await context.newPage();
     await page.setViewportSize({ width: 1280, height: 720 });
     if (recordHandle) recordHandle.handle = await attachScoutScreencast(context, page, roundIdx, beamSlot);
-    await page.goto(startUrl, { waitUntil: 'commit', timeout: 30_000 });
+    await page.goto(startUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
     await page.waitForLoadState('domcontentloaded', { timeout: 10_000 }).catch(() => {});
     await page.waitForTimeout(1200);
     // Try Cmd+K then Ctrl+K
@@ -847,7 +848,8 @@ async function executeCandidate({
     page = await context.newPage();
     await page.setViewportSize({ width: 1280, height: 720 });
     if (recordHandle) recordHandle.handle = await attachScoutScreencast(context, page, roundIdx, beamSlot);
-    await page.goto(startUrl, { waitUntil: 'commit', timeout: 30_000 });
+    await page.goto(startUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
     await page.waitForLoadState('domcontentloaded', { timeout: 8000 }).catch(() => {});
     await page.waitForTimeout(1500);
     if (scrollYStart > 0) {
@@ -958,7 +960,7 @@ const chromeProc = spawn(FULL_CHROME, [
   '--disable-dev-shm-usage',
   '--disable-gpu',
   '--enable-features=NetworkServiceInProcess',
-  '--disable-features=NetworkService,PaintHolding,Translate',
+  '--disable-features=NetworkService,Translate',
   '--headless=new',
   '--ozone-platform=headless',
   '--use-angle=swiftshader-webgl',
@@ -1027,7 +1029,8 @@ log(`CDP screencast started (writing observe/latest.jpg)`);
 log(`Goal: ${GOAL}`);
 log(`Start: ${START_URL}`);
 log(`Max steps (incl. backtracks): ${MAX_STEPS}`);
-await leadPage.goto(START_URL, { waitUntil: 'commit', timeout: 30_000 });
+await leadPage.goto(START_URL, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+await leadPage.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
 await leadPage.waitForTimeout(2500);
 
 // Per-state attempted-actions stack (BEAM=0) / rejected-descriptions stack (BEAM=1).
@@ -1239,7 +1242,8 @@ if (!BEAM) {
         });
         try {
           if (page.url() !== stateBefore.url) {
-            await page.goto(stateBefore.url, { waitUntil: 'commit', timeout: 20_000 });
+            await page.goto(stateBefore.url, { waitUntil: 'domcontentloaded', timeout: 20_000 });
+            await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
             await page.waitForTimeout(1500);
           }
           await page.evaluate((y) => window.scrollTo(0, y), stateBefore.scrollY);
@@ -1787,7 +1791,8 @@ if (!BEAM) {
         attemptedByState.set(sk, attemptedHere);
         try {
           if (page.url() !== stateBefore.url) {
-            await page.goto(stateBefore.url, { waitUntil: 'commit', timeout: 20_000 });
+            await page.goto(stateBefore.url, { waitUntil: 'domcontentloaded', timeout: 20_000 });
+            await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
             await page.waitForTimeout(1500);
           }
           await page.evaluate((y) => window.scrollTo(0, y), stateBefore.scrollY);
@@ -1881,7 +1886,8 @@ if (!BEAM) {
         screenshotBefore: beforePath, screenshotAfter: afterPath,
       });
       try {
-        await page.goto(stateBefore.url, { waitUntil: 'commit', timeout: 20_000 });
+        await page.goto(stateBefore.url, { waitUntil: 'domcontentloaded', timeout: 20_000 });
+        await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
         await page.waitForTimeout(2000);
         await page.evaluate((y) => window.scrollTo(0, y), stateBefore.scrollY);
         await page.waitForTimeout(400);
@@ -2009,7 +2015,7 @@ if (!BEAM) {
     // when Chromium's zygote spawns 14+ renderer processes simultaneously.
     const newContexts = [];
     for (let _i = 0; _i < slots.length; _i++) {
-      newContexts.push(await browser.newContext({ viewport: { width: 1280, height: 720 } }));
+      newContexts.push(await browser.newContext({ viewport: { width: 1280, height: 720 }, ignoreHTTPSErrors: true }));
       if (_i < slots.length - 1) await new Promise(r => setTimeout(r, 75));
     }
     // v21: one record-handle box per slot, mutated by attachScoutScreencast inside the executors.
