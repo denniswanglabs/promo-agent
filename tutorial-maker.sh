@@ -52,12 +52,14 @@ if ! bash "$PROJECT/explainer-agent/auto-allowlist.sh" "$URL" 2>&1 | tee "$WORKD
   exit 1
 fi
 
-# Step 2: NemoClaw agent run. BEAM=1 = multi-tab on; BEAM_K=4 = 4 scouts.
-# grid.html populates with 4 parallel scout tabs Dennis can watch during the
+# Step 2: NemoClaw agent run. BEAM=1 = multi-tab on; BEAM_K=2 = 2 scouts.
+# grid.html populates with 2 parallel scout tabs Dennis can watch during the
 # run. make-explainer.sh uses BEAM as a strict mode-toggle ([ "$BEAM" = "1" ])
 # and BEAM_K as the scout count — must pass both.
+# K dropped 4→2: NemoClaw sandbox hardcodes RLIMIT_NPROC=512; K=4 hits
+# pthread_create EAGAIN during the observe-snapshot burst.
 BEAM="${BEAM:-1}"
-BEAM_K="${BEAM_K:-4}"
+BEAM_K="${BEAM_K:-2}"
 echo
 echo "[tutorial-maker] Step 2/4: NemoClaw agent run (BEAM=$BEAM BEAM_K=$BEAM_K)..."
 cd "$PROJECT"
