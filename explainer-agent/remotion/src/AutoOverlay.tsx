@@ -772,23 +772,12 @@ const CursorSprite: React.FC<{ inFrame?: boolean }> = ({ inFrame = false }) => {
   cx += wobbleX;
   cy += wobbleY;
 
-  // If we're mounted inside FramedScreen, re-project the canvas-space coords
-  // through the same UV crop transform that VideoCrop applies to the video,
-  // so cursor tracks zoomed targets pixel-accurately. cursorTrack lives in
-  // 2560×1440 canvas pixels (scaler.pt in auto-overlay-config.js).
-  let renderLeft = cx - 8;
-  let renderTop = cy - 4;
-  if (inFrame) {
-    const crop = cropToTransform(computeCropState(tSec));
-    // Map source-px → UV, then apply the same translate+scale the video gets.
-    // Result is in inner-rect coords (0..INNER_W, 0..INNER_H).
-    const uvCX = cx / SOURCE_W;
-    const uvCY = cy / SOURCE_H;
-    const innerX = uvCX * SOURCE_W * crop.scale + crop.tx;
-    const innerY = uvCY * SOURCE_H * crop.scale + crop.ty;
-    renderLeft = innerX - 8;
-    renderTop = innerY - 4;
-  }
+  // Cursor is rendered inside FramedScreen at source coords. The parent
+  // CameraZoom applies the whole-composition translate+scale transform, so
+  // we no longer need to re-project the cursor here — the camera transform
+  // moves the entire stage (wallpaper + framed screen + cursor) together.
+  const renderLeft = cx - 8;
+  const renderTop = cy - 4;
 
   // Fade in over first 6f after title ends
   const fadeIn = interpolate(frame, [titleEndF - 6, titleEndF + 6], [0, 1], {
@@ -1475,15 +1464,17 @@ const FinalFade: React.FC = () => {
 };
 
 // ===========================================================================
-// 8. Camera (cinematic UV crop) — replaces the centroid-scaling CameraPan.
-//    Math lives in computeCropState + cropToTransform below.
+// 8. Camera (whole-composition zoom) — replaces the prior UV-crop transform.
+//    Math lives in computeCropState (below). The CameraZoom component
+//    consumes it and applies a single translate+scale to the whole stage
+//    (wallpaper + framed screen + cursor) so nothing gets cropped at zoom.
 // ===========================================================================
 //
 // Reads CFG.cameraEvents (zoomIn → hold → zoomOut triples emitted by
 // auto-overlay-config.js Phase 2 schema). Each event carries
-// `targetCenter` in UV [0,1] source coords and `targetZoom`. We compute a
-// per-frame CropState, snap-to-edge + clamp it, then translate-and-scale
-// the OffthreadVideo so the focus point lands at the FramedScreen center.
+// `targetCenter` in UV [0,1] source coords and `targetZoom`. CameraZoom maps
+// the UV center to canvas-px (FRAME_INSET + center * INNER), then translates
+// so that point lands at the canvas center under the scale factor.
 
 const easeInOutCubic = (t: number) => {
   // standard formula: t<0.5 ? 4t^3 : 1 - ( -2t+2 )^3 / 2
@@ -1560,12 +1551,15 @@ const cropToTransform = (s: CropState) => {
 
 // Stage paints the static gradient that frames the recording. Sits behind
 // FramedScreen at the AbsoluteFill canvas level.
-const Stage: React.FC = () => (
-  <AbsoluteFill style={{ background: STAGE_GRADIENT }} />
+// NOTE: Will be swapped to image-backed wallpaper in Commit B.
+const Stage: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
+  <AbsoluteFill style={{ background: STAGE_GRADIENT }}>
+    {children}
+  </AbsoluteFill>
 );
 
 // FramedScreen is the fixed inner rect with rounded corners + drop shadow.
-// `overflow: hidden` clips the VideoCrop transform to the rounded rect.
+// `overflow: hidden` clips child content to the rounded rect.
 const FramedScreen: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (
@@ -1587,12 +1581,10 @@ const FramedScreen: React.FC<{ children: React.ReactNode }> = ({
   </div>
 );
 
-// VideoCrop applies the per-frame UV-crop transform from computeCropState.
-// transform-origin: 0 0 (top-left) — matches the math in cropToTransform.
+// VideoCrop now just renders the video at INNER_W × INNER_H with no internal
+// transform. The CameraZoom parent applies the whole-composition translate+scale
+// so nothing gets cropped at zoom (cursor and content stay visible).
 const VideoCrop: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const frame = useCurrentFrame();
-  const tSec = frame / CFG.fps;
-  const { tx, ty, scale } = cropToTransform(computeCropState(tSec));
   return (
     <div
       style={{
@@ -1601,8 +1593,41 @@ const VideoCrop: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         left: 0,
         width: INNER_W,
         height: INNER_H,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+// CameraZoom wraps Stage + FramedScreen and applies a per-frame translate+scale
+// to the whole composition so the wallpaper + framed window + screen video +
+// cursor + callouts ALL move together. Nothing gets cropped — content and
+// cursor stay visible at any zoom factor.
+//
+// Reads CFG.cameraEvents `targetCenter` (in source UV) and `targetZoom`.
+// Maps the UV center to canvas-px center, then computes the translate that
+// keeps the canvas center pinned to the zoom focus.
+const CameraZoom: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const frame = useCurrentFrame();
+  const tSec = frame / CFG.fps;
+  const s = computeCropState(tSec);
+  const z = s.zoom;
+  // Map UV source coords -> canvas px (the framed window sits at FRAME_INSET).
+  const cx_canvas = FRAME_INSET_X + s.centerX * INNER_W;
+  const cy_canvas = FRAME_INSET_Y + s.centerY * INNER_H;
+  const tx = W / 2 - cx_canvas * z;
+  const ty = H / 2 - cy_canvas * z;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: W,
+        height: H,
         transformOrigin: "0 0",
-        transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
+        transform: `translate(${tx}px, ${ty}px) scale(${z})`,
         transition: "none",
         willChange: "transform",
       }}
@@ -1636,26 +1661,30 @@ export const AutoOverlay: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ background: "#000" }}>
-      <Stage />
-      <FramedScreen>
-        <VideoCrop>
-          <Sequence from={0} durationInFrames={baseFrames}>
-            <OffthreadVideo src={baseSrc} style={videoStyle} />
-          </Sequence>
-          {freezeFrames > 0 && (
-            <Sequence from={baseFrames} durationInFrames={freezeFrames}>
-              <Freeze frame={baseFrames - 1}>
-                <OffthreadVideo src={baseSrc} style={videoStyle} />
-              </Freeze>
+      {/* CameraZoom wraps Stage + FramedScreen so the wallpaper + framed
+          window + video + cursor all translate+scale together. Nothing is
+          cropped at zoom; cursor + content remain visible. */}
+      <CameraZoom>
+        <Stage />
+        <FramedScreen>
+          <VideoCrop>
+            <Sequence from={0} durationInFrames={baseFrames}>
+              <OffthreadVideo src={baseSrc} style={videoStyle} />
             </Sequence>
-          )}
-        </VideoCrop>
-        <CursorSprite inFrame />
-      </FramedScreen>
+            {freezeFrames > 0 && (
+              <Sequence from={baseFrames} durationInFrames={freezeFrames}>
+                <Freeze frame={baseFrames - 1}>
+                  <OffthreadVideo src={baseSrc} style={videoStyle} />
+                </Freeze>
+              </Sequence>
+            )}
+          </VideoCrop>
+          <CursorSprite inFrame />
+        </FramedScreen>
+      </CameraZoom>
 
-      {/* Canvas-level overlays — sit above FramedScreen at full 2560×1440 so
-          they can extend over the matte if a design ever needs it
-          (per spec 2026-05-26-cinematic-uv-crop-design.md line 28). */}
+      {/* Canvas-level overlays — OUTSIDE CameraZoom, stay pinned at the
+          2560×1440 canvas root and do not zoom with the stage. */}
       <ScrollIndicators />
       <AllSidebarCallouts />
       <AllClickRings />
