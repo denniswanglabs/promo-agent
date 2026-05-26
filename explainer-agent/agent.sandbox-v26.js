@@ -745,7 +745,14 @@ async function trySearchScout(context, goalPhrase, startUrl, { roundIdx = 0, bea
     await page.setViewportSize({ width: 1280, height: 720 });
     if (recordHandle) recordHandle.handle = await attachScoutScreencast(context, page, roundIdx, beamSlot);
     await page.goto(startUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
-    await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
+    // YC SPA UI render fix: weak >0 gate let single-shell React mounts pass before hydration.
+    // Wait for either ≥3 body children OR a real semantic landmark (h1/h2/main/nav/article).
+    await page.waitForFunction(() => {
+      if (!document.body) return false;
+      if (document.body.children.length >= 3) return true;
+      return !!document.querySelector('h1, h2, main, nav a, article');
+    }, { timeout: 8000 }).catch(() => {});
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
     await page.waitForLoadState('domcontentloaded', { timeout: 10_000 }).catch(() => {});
     await page.waitForTimeout(1200);
     // Try Cmd+K then Ctrl+K
@@ -849,7 +856,14 @@ async function executeCandidate({
     await page.setViewportSize({ width: 1280, height: 720 });
     if (recordHandle) recordHandle.handle = await attachScoutScreencast(context, page, roundIdx, beamSlot);
     await page.goto(startUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
-    await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
+    // YC SPA UI render fix: weak >0 gate let single-shell React mounts pass before hydration.
+    // Wait for either ≥3 body children OR a real semantic landmark (h1/h2/main/nav/article).
+    await page.waitForFunction(() => {
+      if (!document.body) return false;
+      if (document.body.children.length >= 3) return true;
+      return !!document.querySelector('h1, h2, main, nav a, article');
+    }, { timeout: 8000 }).catch(() => {});
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
     await page.waitForLoadState('domcontentloaded', { timeout: 8000 }).catch(() => {});
     await page.waitForTimeout(1500);
     if (scrollYStart > 0) {
@@ -1030,8 +1044,14 @@ log(`Goal: ${GOAL}`);
 log(`Start: ${START_URL}`);
 log(`Max steps (incl. backtracks): ${MAX_STEPS}`);
 await leadPage.goto(START_URL, { waitUntil: 'domcontentloaded', timeout: 30_000 });
-await leadPage.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
-await leadPage.waitForTimeout(2500);
+// YC SPA UI render fix: lead-nav cold-cache hydration needs longer than scout paths.
+await leadPage.waitForFunction(() => {
+  if (!document.body) return false;
+  if (document.body.children.length >= 3) return true;
+  return !!document.querySelector('h1, h2, main, nav a, article');
+}, { timeout: 10_000 }).catch(() => {});
+await leadPage.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
+await leadPage.waitForTimeout(4000);
 
 // Per-state attempted-actions stack (BEAM=0) / rejected-descriptions stack (BEAM=1).
 const attemptedByState = new Map();
@@ -1243,7 +1263,14 @@ if (!BEAM) {
         try {
           if (page.url() !== stateBefore.url) {
             await page.goto(stateBefore.url, { waitUntil: 'domcontentloaded', timeout: 20_000 });
-            await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
+            // YC SPA UI render fix: weak >0 gate let single-shell React mounts pass before hydration.
+    // Wait for either ≥3 body children OR a real semantic landmark (h1/h2/main/nav/article).
+    await page.waitForFunction(() => {
+      if (!document.body) return false;
+      if (document.body.children.length >= 3) return true;
+      return !!document.querySelector('h1, h2, main, nav a, article');
+    }, { timeout: 8000 }).catch(() => {});
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
             await page.waitForTimeout(1500);
           }
           await page.evaluate((y) => window.scrollTo(0, y), stateBefore.scrollY);
@@ -1792,7 +1819,14 @@ if (!BEAM) {
         try {
           if (page.url() !== stateBefore.url) {
             await page.goto(stateBefore.url, { waitUntil: 'domcontentloaded', timeout: 20_000 });
-            await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
+            // YC SPA UI render fix: weak >0 gate let single-shell React mounts pass before hydration.
+    // Wait for either ≥3 body children OR a real semantic landmark (h1/h2/main/nav/article).
+    await page.waitForFunction(() => {
+      if (!document.body) return false;
+      if (document.body.children.length >= 3) return true;
+      return !!document.querySelector('h1, h2, main, nav a, article');
+    }, { timeout: 8000 }).catch(() => {});
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
             await page.waitForTimeout(1500);
           }
           await page.evaluate((y) => window.scrollTo(0, y), stateBefore.scrollY);
@@ -1887,7 +1921,14 @@ if (!BEAM) {
       });
       try {
         await page.goto(stateBefore.url, { waitUntil: 'domcontentloaded', timeout: 20_000 });
-        await page.waitForFunction(() => document.body && document.body.children.length > 0, { timeout: 5000 }).catch(() => {});
+        // YC SPA UI render fix: weak >0 gate let single-shell React mounts pass before hydration.
+    // Wait for either ≥3 body children OR a real semantic landmark (h1/h2/main/nav/article).
+    await page.waitForFunction(() => {
+      if (!document.body) return false;
+      if (document.body.children.length >= 3) return true;
+      return !!document.querySelector('h1, h2, main, nav a, article');
+    }, { timeout: 8000 }).catch(() => {});
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
         await page.waitForTimeout(2000);
         await page.evaluate((y) => window.scrollTo(0, y), stateBefore.scrollY);
         await page.waitForTimeout(400);
