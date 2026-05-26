@@ -34,5 +34,222 @@ network_policies:
       - host: images.nvidia.com
         port: 443
         access: full
+      # docs.nvidia.com is built on Fern (https://buildwithfern.com).
+      # ALL its CSS/JS/font assets load from app.buildwithfern.com — without
+      # this whitelist, the docs render as unstyled raw HTML in the agent's
+      # browser.
+      - host: app.buildwithfern.com
+        port: 443
+        access: full
+      - host: cdn.buildwithfern.com
+        port: 443
+        access: full
+      - host: files.buildwithfern.com
+        port: 443
+        access: full
+      # Many NVIDIA docs pages (including the docs.nvidia.com root SPA and
+      # older sphinx-style pages like the NeMo Framework user guide) load
+      # their CSS bundles + scripts from docscontent.nvidia.com. Without
+      # this host, pages render as unstyled raw HTML.
+      - host: docscontent.nvidia.com
+        port: 443
+        access: full
+      # Asset CDN seen on root pages for NVIDIA logo + chatbot JS
+      - host: d4j85rjepgcta.cloudfront.net
+        port: 443
+        access: full
+      # Stripe docs — Dennis explicitly requested. docs.stripe.com is the
+      # navigation target; the others are the common subresources Stripe's
+      # docs pull in (JS SDK, CDN, beacon, recaptcha-like q/r endpoints).
+      - host: docs.stripe.com
+        port: 443
+        access: full
+      - host: js.stripe.com
+        port: 443
+        access: full
+      - host: b.stripecdn.com
+        port: 443
+        access: full
+      - host: q.stripe.com
+        port: 443
+        access: full
+      - host: r.stripe.com
+        port: 443
+        access: full
+      # Excalidraw — v23 "agent draws a square" demo. Main app + asset CDNs.
+      - host: excalidraw.com
+        port: 443
+        access: full
+      - host: assets.excalidraw.com
+        port: 443
+        access: full
+      - host: oss.excalidraw.com
+        port: 443
+        access: full
+      - host: libraries.excalidraw.com
+        port: 443
+        access: full
+      - host: fonts.excalidraw.com
+        port: 443
+        access: full
+      # Auto-added by auto-allowlist.sh
+      - host: cdn.docs.stripe.com
+        port: 443
+        access: full
+      - host: assets.docs.stripe.com
+        port: 443
+        access: full
+      - host: static.docs.stripe.com
+        port: 443
+        access: full
+      - host: fonts.docs.stripe.com
+        port: 443
+        access: full
+      - host: images.docs.stripe.com
+        port: 443
+        access: full
+      - host: www.stripe.com
+        port: 443
+        access: full
+      - host: cdn.stripe.com
+        port: 443
+        access: full
+      - host: assets.stripe.com
+        port: 443
+        access: full
+      - host: static.stripe.com
+        port: 443
+        access: full
+      - host: fonts.googleapis.com
+        port: 443
+        access: full
+      - host: fonts.gstatic.com
+        port: 443
+        access: full
+      - host: cdnjs.cloudflare.com
+        port: 443
+        access: full
+      - host: ajax.googleapis.com
+        port: 443
+        access: full
+      - host: code.jquery.com
+        port: 443
+        access: full
+      - host: unpkg.com
+        port: 443
+        access: full
+      # Auto-added by auto-allowlist.sh
+      - host: en.wikipedia.org
+        port: 443
+        access: full
+      - host: cdn.en.wikipedia.org
+        port: 443
+        access: full
+      - host: assets.en.wikipedia.org
+        port: 443
+        access: full
+      - host: static.en.wikipedia.org
+        port: 443
+        access: full
+      - host: fonts.en.wikipedia.org
+        port: 443
+        access: full
+      - host: images.en.wikipedia.org
+        port: 443
+        access: full
+      - host: www.wikipedia.org
+        port: 443
+        access: full
+      - host: cdn.wikipedia.org
+        port: 443
+        access: full
+      - host: assets.wikipedia.org
+        port: 443
+        access: full
+      - host: static.wikipedia.org
+        port: 443
+        access: full
+      # Auto-added by auto-allowlist.sh
+      - host: vercel.com
+        port: 443
+        access: full
+      - host: cdn.vercel.com
+        port: 443
+        access: full
+      - host: static.vercel.com
+        port: 443
+        access: full
+      - host: fonts.vercel.com
+        port: 443
+        access: full
+      - host: images.vercel.com
+        port: 443
+        access: full
+      - host: www.vercel.com
+        port: 443
+        access: full
+      # Auto-added by auto-allowlist.sh
+      - host: cdn.excalidraw.com
+        port: 443
+        access: full
+      - host: static.excalidraw.com
+        port: 443
+        access: full
+      - host: images.excalidraw.com
+        port: 443
+        access: full
+      - host: www.excalidraw.com
+        port: 443
+        access: full
+      # Auto-added by auto-allowlist.sh
+      - host: example.com
+        port: 443
+        access: full
+      - host: cdn.example.com
+        port: 443
+        access: full
+      - host: assets.example.com
+        port: 443
+        access: full
+      - host: static.example.com
+        port: 443
+        access: full
+      - host: fonts.example.com
+        port: 443
+        access: full
+      - host: images.example.com
+        port: 443
+        access: full
+      - host: www.example.com
+        port: 443
+        access: full
+      # Auto-added by auto-allowlist.sh
+      - host: www.youtube.com
+        port: 443
+        access: full
+      - host: cdn.www.youtube.com
+        port: 443
+        access: full
+      - host: assets.www.youtube.com
+        port: 443
+        access: full
+      - host: static.www.youtube.com
+        port: 443
+        access: full
+      - host: fonts.www.youtube.com
+        port: 443
+        access: full
+      - host: images.www.youtube.com
+        port: 443
+        access: full
+      - host: cdn.youtube.com
+        port: 443
+        access: full
+      - host: assets.youtube.com
+        port: 443
+        access: full
+      - host: static.youtube.com
+        port: 443
+        access: full
     binaries:
       - { path: "/**" }
