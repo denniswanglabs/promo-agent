@@ -1560,9 +1560,10 @@ const Stage: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
       src={staticFile("wallpaper.jpg")}
       style={{
         position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
+        left: "-25%",
+        top: "-25%",
+        width: "150%",
+        height: "150%",
         objectFit: "cover",
       }}
     />
@@ -1655,6 +1656,17 @@ const CameraZoom: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const cy_canvas = FRAME_INSET_Y + s.centerY * INNER_H;
   const tx = W / 2 - cx_canvas * z;
   const ty = H / 2 - cy_canvas * z;
+  // Clamp translate so the 150%-oversized wallpaper edges can never slide
+  // off-canvas. Wallpaper spans (-W*0.25 .. W*1.25, -H*0.25 .. H*1.25) in
+  // CameraZoom-local coords; after scale z + translate, it must still cover
+  // (0..W, 0..H). Corner clicks get edge-snapped (Cap.so style).
+  const WALLPAPER_OVERSIZE = 0.25;
+  const txMin = W - W * (1 + WALLPAPER_OVERSIZE) * z;
+  const txMax = W * WALLPAPER_OVERSIZE * z;
+  const tyMin = H - H * (1 + WALLPAPER_OVERSIZE) * z;
+  const tyMax = H * WALLPAPER_OVERSIZE * z;
+  const txClamped = Math.max(txMin, Math.min(txMax, tx));
+  const tyClamped = Math.max(tyMin, Math.min(tyMax, ty));
   return (
     <div
       style={{
@@ -1664,7 +1676,7 @@ const CameraZoom: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         width: W,
         height: H,
         transformOrigin: "0 0",
-        transform: `translate(${tx}px, ${ty}px) scale(${z})`,
+        transform: `translate(${txClamped}px, ${tyClamped}px) scale(${z})`,
         transition: "none",
         willChange: "transform",
       }}
