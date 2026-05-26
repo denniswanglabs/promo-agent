@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Run {{ job_id }} — Explainer Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0e1a;
+      --bg-elev: #11162a;
+      --panel: #141a31;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --text: #e6e6e6;
+      --muted: rgba(230, 230, 230, 0.58);
+      --muted-2: rgba(230, 230, 230, 0.38);
+      --accent: #84cc16;
+      --accent-dim: rgba(132, 204, 22, 0.18);
+      --accent-glow: rgba(132, 204, 22, 0.35);
+      --danger: #ef4444;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(132, 204, 22, 0.08), transparent 60%);
+      background-attachment: fixed;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .brand-mark {
+      width: 8px; height: 8px; border-radius: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .brand-name { color: var(--accent); font-weight: 600; }
+    .brand a { color: var(--muted); text-decoration: none; }
+    .brand a:hover { color: var(--text); }
+
+    .chip {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      padding: 7px 14px;
+      border: 1px solid var(--border-strong);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: 28px;
+      padding: 32px;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: linear-gradient(180deg, var(--panel) 0%, var(--bg-elev) 100%);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 26px 28px;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .job-id { color: var(--accent); }
+
+    h2 { margin: 0 0 4px; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+    .goal { color: var(--muted); font-size: 14px; margin-bottom: 22px; word-break: break-word; }
+    .goal .url {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--accent);
+      display: block;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    .phase-block {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      background: var(--bg);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      margin-bottom: 18px;
+    }
+    .phase-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 14px var(--accent-glow);
+      animation: pulse 1.4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    .phase-dot.done { animation: none; background: var(--accent); box-shadow: 0 0 18px var(--accent-glow); }
+    .phase-dot.failed { animation: none; background: var(--danger); box-shadow: 0 0 14px rgba(239,68,68,0.5); }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.78); }
+    }
+    .phase-text { flex: 1; }
+    .phase-label { font-size: 16px; font-weight: 600; }
+    .phase-sub {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--muted); letter-spacing: 1px;
+      text-transform: uppercase; margin-top: 4px;
+    }
+    .elapsed {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--accent);
+      padding: 6px 12px;
+      background: var(--accent-dim);
+      border-radius: 6px;
+    }
+
+    .log {
+      background: #050810;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      color: rgba(230, 230, 230, 0.78);
+      max-height: 320px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .log-empty { color: var(--muted-2); font-style: italic; }
+    .log-title {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 16px 0 8px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    .video-result {
+      display: none;
+      margin-bottom: 18px;
+    }
+    .video-result video {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      background: #000;
+      display: block;
+    }
+    .video-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .btn {
+      padding: 11px 18px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid transparent;
+      transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+    }
+    .btn-primary {
+      background: var(--accent); color: #0a0e1a; border: none;
+    }
+    .btn-primary:hover { background: #94dc1f; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border-color: rgba(239, 68, 68, 0.45);
+    }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.12); }
+
+    .iframe-wrap {
+      height: 720px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-strong);
+      background: #050810;
+      position: relative;
+    }
+    .iframe-wrap iframe {
+      width: 100%; height: 100%; border: 0; display: block;
+    }
+    .iframe-label {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      background: rgba(10, 14, 26, 0.85);
+      padding: 4px 10px;
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    .panel-title {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <a href="/"><span class="brand-name">Explainer Agent</span> &nbsp;·&nbsp; GTC Taipei 2026</a>
+    </div>
+    <div class="chip">JOB <span id="meta-job-id">{{ job_id }}</span></div>
+  </header>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="meta-row">
+        <span class="job-id">RUN</span>
+        <span>{{ job_id }}</span>
+      </div>
+      <h2 id="meta-goal">{{ meta.goal }}</h2>
+      <div class="goal">
+        Target
+        <span class="url" id="meta-url">{{ meta.url }}</span>
+      </div>
+
+      <div class="phase-block" id="phase-block">
+        <div class="phase-dot" id="phase-dot"></div>
+        <div class="phase-text">
+          <div class="phase-label" id="phase-label">Queued</div>
+          <div class="phase-sub" id="phase-sub">waiting for first log line</div>
+        </div>
+        <div class="elapsed" id="elapsed">0s</div>
+      </div>
+
+      <div class="video-result" id="video-result">
+        <div class="panel-title">Final cut</div>
+        <video id="video-player" controls preload="metadata"></video>
+        <div class="video-actions">
+          <a class="btn btn-primary" id="download-link" href="#" download>Download MP4</a>
+          <a class="btn btn-secondary" href="/">Run another</a>
+        </div>
+      </div>
+
+      <div id="failure-actions" style="display: none;">
+        <form action="/run" method="POST" style="display: inline;">
+          <input type="hidden" name="url" id="retry-url" value="{{ meta.url }}" />
+          <input type="hidden" name="goal" id="retry-goal" value="{{ meta.goal }}" />
+          <button class="btn btn-danger" type="submit">Retry</button>
+        </form>
+        &nbsp;
+        <a class="btn btn-secondary" href="/">Start over</a>
+      </div>
+
+      <div class="log-title">Latest log</div>
+      <pre class="log" id="log"><span class="log-empty">waiting...</span></pre>
+    </section>
+
+    <section class="panel" style="padding: 18px;">
+      <div class="panel-title" style="padding: 0 6px;">Live scout grid · :8081</div>
+      <div class="iframe-wrap">
+        <iframe src="http://127.0.0.1:8081/grid.html" title="OpenClaw scout grid"></iframe>
+        <div class="iframe-label">observe-host</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      const JOB_ID = {{ job_id|tojson }};
+      const STATUS_URL = '/api/status/' + JOB_ID;
+      let pollTimer = null;
+      let stopped = false;
+
+      const $ = (id) => document.getElementById(id);
+
+      function fmtElapsed(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        if (m === 0) return s + 's';
+        return m + 'm ' + s.toString().padStart(2, '0') + 's';
+      }
+
+      function renderLog(lines) {
+        const el = $('log');
+        if (!lines || lines.length === 0) {
+          el.innerHTML = '<span class="log-empty">waiting for log output...</span>';
+          return;
+        }
+        el.textContent = lines.join('\n');
+        el.scrollTop = el.scrollHeight;
+      }
+
+      function setPhase(phase, label, sub) {
+        const dot = $('phase-dot');
+        dot.classList.remove('done', 'failed');
+        if (phase === 'done') dot.classList.add('done');
+        if (phase === 'failed') dot.classList.add('failed');
+        $('phase-label').textContent = label || phase;
+        $('phase-sub').textContent = sub || '';
+      }
+
+      function showVideo(url) {
+        const wrap = $('video-result');
+        const v = $('video-player');
+        const dl = $('download-link');
+        if (v.src !== url) {
+          v.src = url;
+        }
+        dl.href = url;
+        wrap.style.display = 'block';
+      }
+
+      function showFailure(lines) {
+        $('failure-actions').style.display = 'block';
+        if (lines && lines.length > 0) {
+          renderLog(lines);
+        }
+      }
+
+      async function poll() {
+        if (stopped) return;
+        try {
+          const res = await fetch(STATUS_URL, { cache: 'no-store' });
+          if (!res.ok) {
+            // 404 means job vanished — stop polling.
+            if (res.status === 404) {
+              setPhase('failed', 'Job not found', 'server lost track of this run');
+              stopped = true;
+              return;
+            }
+            throw new Error('status ' + res.status);
+          }
+          const data = await res.json();
+
+          $('elapsed').textContent = fmtElapsed(data.elapsed_sec);
+
+          const phaseLabels = {
+            queued: ['Queued', 'spawning tutorial-maker'],
+            discovering: ['Discovering', 'auto-allowlist host + subresources'],
+            recording: ['Recording', 'NemoClaw scouts running'],
+            rendering: ['Rendering', 'replay 60fps + overlay'],
+            done: ['Done', 'cinematic walkthrough ready'],
+            failed: ['Failed', 'see log below'],
+          };
+          const [label, sub] = phaseLabels[data.phase] || [data.phase, ''];
+          setPhase(data.phase, label, sub);
+
+          renderLog(data.last_log_lines || []);
+
+          if (data.phase === 'done' && data.output_mp4) {
+            showVideo(data.output_mp4);
+            stopped = true;
+          } else if (data.phase === 'failed') {
+            showFailure(data.last_log_lines);
+            stopped = true;
+          }
+        } catch (e) {
+          // Soft-fail; next tick will retry.
+          console.warn('poll error', e);
+        } finally {
+          if (!stopped) pollTimer = setTimeout(poll, 2000);
+        }
+      }
+
+      poll();
+    })();
+  </script>
+</body>
+</html>
