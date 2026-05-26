@@ -16,6 +16,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Freeze,
+  Img,
   OffthreadVideo,
   Sequence,
   interpolate,
@@ -1551,9 +1552,20 @@ const cropToTransform = (s: CropState) => {
 
 // Stage paints the static gradient that frames the recording. Sits behind
 // FramedScreen at the AbsoluteFill canvas level.
-// NOTE: Will be swapped to image-backed wallpaper in Commit B.
+// Image-backed wallpaper: wallpaper.jpg in remotion/public/ at object-fit:cover.
+// Fallback #0a0e1a color shows if the image is missing.
 const Stage: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
-  <AbsoluteFill style={{ background: STAGE_GRADIENT }}>
+  <AbsoluteFill style={{ background: "#0a0e1a" }}>
+    <Img
+      src={staticFile("wallpaper.jpg")}
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
+    />
     {children}
   </AbsoluteFill>
 );
