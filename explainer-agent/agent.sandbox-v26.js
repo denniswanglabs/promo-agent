@@ -162,6 +162,12 @@ async function callNemotronOmniJudge({ goal, screenshotPath }) {
         role: 'system',
         content:
           `You are a strict visual judge for an autonomous web-navigation agent. ` +
+          `When the user's goal mentions specific text targets (e.g. "click 'Library'", ` +
+          `"find Jared Friedman", "click LinkedIn"), extract those literal terms first. ` +
+          `Then check whether they appear in the page's visible text, clickable text, ` +
+          `or accessibility labels (aria-label / alt). If the target terms are present ` +
+          `→ on-track. If absent → off-track. Visual-only icons usually have their ` +
+          `label in aria-label or alt — treat those as text matches. ` +
           `Keep your reasoning to ≤150 words, then output the JSON. Do not write ` +
           `prose outside the JSON object. ` +
           `Return ONLY a single valid JSON object matching the schema ` +
@@ -490,6 +496,9 @@ EXCALIDRAW DRAWING GUIDE:
   - To change a shape's color: with the shape selected, the right-side panel shows "Stroke" color swatches. clickAt the swatch coordinates if visible (Excalidraw's stroke colors panel appears on the right side after selection).
   - The canvas drawable area is roughly (200..1300, 80..880) — leave space for the UI.
   - Goal completion for drawing tasks: the goal shape/text must be visible at the destination.
+
+KEYWORD-ANCHOR PREFERENCE:
+If the user's goal mentions specific text targets (verbatim names, button labels, link text, icon labels), strongly prefer clickables whose visible text, aria-label, or alt attribute contains those exact terms. Icons are often labelled via aria-label or alt; trust those labels. Only fall back to fuzzy/visual matches when no clickable's text or label matches.
 
 When DONE:
   - The goal content/shape/text is visible on the page, OR you are genuinely stuck (no scroll/click/drag/type/clickAt can help).
