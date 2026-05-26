@@ -1155,13 +1155,10 @@ if (!BEAM) {
     if (decision.done) {
       const checkPath = join(OUT_DIR, 'attempted-screenshots', `attempt_${attemptIndex}_after.png`);
       await page.screenshot({ path: checkPath });
-      let judge;
-      try {
-        judge = await callNemotronOmniJudge({ goal: GOAL, screenshotPath: checkPath });
-      } catch (e) {
-        log(`step-loop ${stepLoop}: nemotron-omni judge failed: ${e.message}`);
-        judge = { at_destination: true, on_right_track: true, reasoning: 'judge-fail; accepting Nemotron-Super done' };
-      }
+      // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end.
+      // For done-check, accept the proposer's done unconditionally (URL
+      // substring match in scene-weighting still flags climactic post-hoc).
+      const judge = { at_destination: true, on_right_track: true, reasoning: 'judge-disabled-v36' };
       log(`[nemotron-omni] done-check: ${JSON.stringify(judge)}`);
       if (judge.at_destination) {
         const finalPath = join(OUT_DIR, 'screenshots', `step_${filteredIndex}_final.png`);
@@ -1181,8 +1178,11 @@ if (!BEAM) {
           attempt: attemptIndex, accepted: false, kind: 'done', url, title,
           reasoning: decision.reasoning, judge,
         });
-        attemptedHere.push(`done (model thought it finished; judge: ${judge.reasoning})`);
-        attemptedByState.set(sk, attemptedHere);
+        // v36: action-banning disabled — proposer is free to retry any action.
+        if (BEAM) {
+          attemptedHere.push(`done (model thought it finished; judge: ${judge.reasoning})`);
+          attemptedByState.set(sk, attemptedHere);
+        }
         attemptIndex++;
         continue;
       }
@@ -1233,13 +1233,8 @@ if (!BEAM) {
       try { await page.screenshot({ path: fullPagePath, fullPage: true }); }
       catch (e) { log(`attempt ${attemptIndex}: fullpage failed: ${e.message}`); }
 
-      let judge;
-      try {
-        judge = await callNemotronOmniJudge({ goal: GOAL, screenshotPath: afterPath });
-      } catch (e) {
-        log(`attempt ${attemptIndex}: nemotron-omni judge failed: ${e.message} — defaulting to on-track`);
-        judge = { at_destination: false, on_right_track: true, reasoning: 'judge-fail; defaulted to on-track' };
-      }
+      // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
+      const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
       log(`[nemotron-omni] judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Scroll ${decision.scroll}`;
@@ -1321,8 +1316,11 @@ if (!BEAM) {
         } catch (e) {
           log(`rollback failed: ${e.message}`);
         }
-        attemptedHere.push(`${description} → ${judge.reasoning}`);
-        attemptedByState.set(sk, attemptedHere);
+        // v36: action-banning disabled — proposer is free to retry any action.
+        if (BEAM) {
+          attemptedHere.push(`${description} → ${judge.reasoning}`);
+          attemptedByState.set(sk, attemptedHere);
+        }
         attemptIndex++;
         continue;
       }
@@ -1357,13 +1355,8 @@ if (!BEAM) {
       const afterPath = join(OUT_DIR, 'attempted-screenshots', `attempt_${attemptIndex}_after.png`);
       await page.screenshot({ path: afterPath });
 
-      let judge;
-      try {
-        judge = await callNemotronOmniJudge({ goal: GOAL, screenshotPath: afterPath });
-      } catch (e) {
-        log(`attempt ${attemptIndex}: drag judge failed: ${e.message} — defaulting to on-track`);
-        judge = { at_destination: false, on_right_track: true, reasoning: 'judge-fail; defaulted to on-track' };
-      }
+      // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
+      const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
       log(`[nemotron-omni] drag-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Drag (${from[0]},${from[1]}) -> (${to[0]},${to[1]})`;
@@ -1410,8 +1403,11 @@ if (!BEAM) {
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
         });
-        attemptedHere.push(`${description} → ${judge.reasoning}`);
-        attemptedByState.set(sk, attemptedHere);
+        // v36: action-banning disabled — proposer is free to retry any action.
+        if (BEAM) {
+          attemptedHere.push(`${description} → ${judge.reasoning}`);
+          attemptedByState.set(sk, attemptedHere);
+        }
         attemptIndex++;
         continue;
       }
@@ -1463,13 +1459,8 @@ if (!BEAM) {
       const afterPath = join(OUT_DIR, 'attempted-screenshots', `attempt_${attemptIndex}_after.png`);
       await page.screenshot({ path: afterPath });
 
-      let judge;
-      try {
-        judge = await callNemotronOmniJudge({ goal: GOAL, screenshotPath: afterPath });
-      } catch (e) {
-        log(`attempt ${attemptIndex}: freedraw judge failed: ${e.message} — defaulting to on-track`);
-        judge = { at_destination: false, on_right_track: true, reasoning: 'judge-fail; defaulted to on-track' };
-      }
+      // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
+      const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
       log(`[nemotron-omni] freedraw-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Freedraw ${points.length}-point polyline`;
@@ -1518,8 +1509,11 @@ if (!BEAM) {
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
         });
-        attemptedHere.push(`${description} → ${judge.reasoning}`);
-        attemptedByState.set(sk, attemptedHere);
+        // v36: action-banning disabled — proposer is free to retry any action.
+        if (BEAM) {
+          attemptedHere.push(`${description} → ${judge.reasoning}`);
+          attemptedByState.set(sk, attemptedHere);
+        }
         attemptIndex++;
         continue;
       }
@@ -1544,13 +1538,8 @@ if (!BEAM) {
       const afterPath = join(OUT_DIR, 'attempted-screenshots', `attempt_${attemptIndex}_after.png`);
       await page.screenshot({ path: afterPath });
 
-      let judge;
-      try {
-        judge = await callNemotronOmniJudge({ goal: GOAL, screenshotPath: afterPath });
-      } catch (e) {
-        log(`attempt ${attemptIndex}: keyboard judge failed: ${e.message} — defaulting to on-track`);
-        judge = { at_destination: false, on_right_track: true, reasoning: 'judge-fail; defaulted to on-track' };
-      }
+      // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
+      const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
       log(`[nemotron-omni] keyboard-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Press ${key}`;
@@ -1595,8 +1584,11 @@ if (!BEAM) {
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
         });
-        attemptedHere.push(`${description} → ${judge.reasoning}`);
-        attemptedByState.set(sk, attemptedHere);
+        // v36: action-banning disabled — proposer is free to retry any action.
+        if (BEAM) {
+          attemptedHere.push(`${description} → ${judge.reasoning}`);
+          attemptedByState.set(sk, attemptedHere);
+        }
         attemptIndex++;
         continue;
       }
@@ -1626,13 +1618,8 @@ if (!BEAM) {
       const afterPath = join(OUT_DIR, 'attempted-screenshots', `attempt_${attemptIndex}_after.png`);
       await page.screenshot({ path: afterPath });
 
-      let judge;
-      try {
-        judge = await callNemotronOmniJudge({ goal: GOAL, screenshotPath: afterPath });
-      } catch (e) {
-        log(`attempt ${attemptIndex}: clickAt judge failed: ${e.message} — defaulting to on-track`);
-        judge = { at_destination: false, on_right_track: true, reasoning: 'judge-fail; defaulted to on-track' };
-      }
+      // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
+      const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
       log(`[nemotron-omni] clickAt-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `clickAt (${x}, ${y})`;
@@ -1680,8 +1667,11 @@ if (!BEAM) {
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
         });
-        attemptedHere.push(`${description} → ${judge.reasoning}`);
-        attemptedByState.set(sk, attemptedHere);
+        // v36: action-banning disabled — proposer is free to retry any action.
+        if (BEAM) {
+          attemptedHere.push(`${description} → ${judge.reasoning}`);
+          attemptedByState.set(sk, attemptedHere);
+        }
         attemptIndex++;
         continue;
       }
@@ -1708,13 +1698,8 @@ if (!BEAM) {
       const afterPath = join(OUT_DIR, 'attempted-screenshots', `attempt_${attemptIndex}_after.png`);
       await page.screenshot({ path: afterPath });
 
-      let judge;
-      try {
-        judge = await callNemotronOmniJudge({ goal: GOAL, screenshotPath: afterPath });
-      } catch (e) {
-        log(`attempt ${attemptIndex}: type judge failed: ${e.message} — defaulting to on-track`);
-        judge = { at_destination: false, on_right_track: true, reasoning: 'judge-fail; defaulted to on-track' };
-      }
+      // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
+      const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
       log(`[nemotron-omni] type-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Type "${text}"`;
@@ -1761,8 +1746,11 @@ if (!BEAM) {
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
         });
-        attemptedHere.push(`${description} → ${judge.reasoning}`);
-        attemptedByState.set(sk, attemptedHere);
+        // v36: action-banning disabled — proposer is free to retry any action.
+        if (BEAM) {
+          attemptedHere.push(`${description} → ${judge.reasoning}`);
+          attemptedByState.set(sk, attemptedHere);
+        }
         attemptIndex++;
         continue;
       }
@@ -1857,8 +1845,11 @@ if (!BEAM) {
           landedUrl: newUrlAfterClick,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
         });
-        attemptedHere.push(`Clicking ${description} only changed the URL fragment — did not navigate to a new page. Pick a different link.`);
-        attemptedByState.set(sk, attemptedHere);
+        // v36: action-banning disabled — proposer is free to retry any action.
+        if (BEAM) {
+          attemptedHere.push(`Clicking ${description} only changed the URL fragment — did not navigate to a new page. Pick a different link.`);
+          attemptedByState.set(sk, attemptedHere);
+        }
         try {
           if (page.url() !== stateBefore.url) {
             await page.goto(stateBefore.url, { waitUntil: 'domcontentloaded', timeout: 20_000 });
@@ -1899,13 +1890,8 @@ if (!BEAM) {
       continue;
     }
 
-    let judge;
-    try {
-      judge = await callNemotronOmniJudge({ goal: GOAL, screenshotPath: afterPath });
-    } catch (e) {
-      log(`attempt ${attemptIndex}: nemotron-omni judge failed: ${e.message} — defaulting to on-track`);
-      judge = { at_destination: false, on_right_track: true, reasoning: 'judge-fail; defaulted to on-track' };
-    }
+    // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
+    const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
     log(`[nemotron-omni] judge: ${JSON.stringify(judge)}`);
 
     const description = decision.description || `Click ${target.text || target.aria || target.tag}`;
@@ -1978,8 +1964,11 @@ if (!BEAM) {
       } catch (e) {
         log(`rollback failed: ${e.message}`);
       }
-      attemptedHere.push(`${description} → landed on ${landedUrl} — judge: ${judge.reasoning}`);
-      attemptedByState.set(sk, attemptedHere);
+      // v36: action-banning disabled — proposer is free to retry any action.
+      if (BEAM) {
+        attemptedHere.push(`${description} → landed on ${landedUrl} — judge: ${judge.reasoning}`);
+        attemptedByState.set(sk, attemptedHere);
+      }
       attemptIndex++;
       continue;
     }
