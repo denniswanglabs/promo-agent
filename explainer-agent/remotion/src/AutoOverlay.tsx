@@ -1593,6 +1593,31 @@ const FramedScreen: React.FC<{ children: React.ReactNode }> = ({
   </div>
 );
 
+// SourceCoordScaler renders children inside a SOURCE_W × SOURCE_H stage so
+// existing overlays that position elements in source-canvas px (spec.x /
+// spec.y / spec.rect from action-log) can be mounted inside FramedScreen
+// without rewriting their coordinate math. The wrapper scales by
+// INNER_W/SOURCE_W so the source-coord stage exactly fills the inner-rect.
+// transform-origin: top-left keeps math identical to the canvas-root case.
+const SourceCoordScaler: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <div
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: SOURCE_W,
+      height: SOURCE_H,
+      transform: `scale(${INNER_W / SOURCE_W})`,
+      transformOrigin: "0 0",
+      pointerEvents: "none",
+    }}
+  >
+    {children}
+  </div>
+);
+
 // VideoCrop now just renders the video at INNER_W × INNER_H with no internal
 // transform. The CameraZoom parent applies the whole-composition translate+scale
 // so nothing gets cropped at zoom (cursor and content stay visible).
@@ -1694,16 +1719,23 @@ export const AutoOverlay: React.FC = () => {
           {/* CursorSprite mount removed: recording (auto-base.mp4) already has
               the DOM cursor baked in from replay-60fps.js. Overlay cursor
               would visually double. Component definition kept for reuse. */}
+          {/* Content-anchored overlays mount INSIDE FramedScreen via
+              SourceCoordScaler so their source-canvas-px coords track the
+              recording content as the CameraZoom transform scales the
+              framed window. */}
+          <SourceCoordScaler>
+            <AllSidebarCallouts />
+            <AllClickRings />
+            <StepLabels />
+            <TeachingPanelEl />
+          </SourceCoordScaler>
         </FramedScreen>
       </CameraZoom>
 
-      {/* Canvas-level overlays — OUTSIDE CameraZoom, stay pinned at the
-          2560×1440 canvas root and do not zoom with the stage. */}
+      {/* Canvas-level overlays — OUTSIDE CameraZoom and FramedScreen, stay
+          pinned at the 2560×1440 canvas root and do not zoom with the
+          stage. Intentionally full-canvas (over wallpaper matte). */}
       <ScrollIndicators />
-      <AllSidebarCallouts />
-      <AllClickRings />
-      <TeachingPanelEl />
-      <StepLabels />
       <FadeBridge />
       <OutroEl />
       <AutoTitle />
