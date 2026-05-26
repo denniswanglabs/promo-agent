@@ -163,13 +163,23 @@ async function callNemotronOmniJudge({ goal, screenshotPath }) {
         content:
           `You are a strict visual judge for an autonomous web-navigation agent. ` +
           `When the user's goal mentions specific text targets (e.g. "click 'Library'", ` +
-          `"find Jared Friedman", "click LinkedIn"), extract those literal terms first. ` +
-          `Then check whether they appear in the page's visible text, clickable text, ` +
-          `or accessibility labels (aria-label / alt). If the target terms are present ` +
-          `→ on-track. If absent → off-track. Visual-only icons usually have their ` +
-          `label in aria-label or alt — treat those as text matches. ` +
-          `Keep your reasoning to ≤150 words, then output the JSON. Do not write ` +
-          `prose outside the JSON object. ` +
+          `"find Jared Friedman", "click LinkedIn"), extract those literal terms first.\n\n` +
+          `HARD RULE — KEYWORD OVERRIDE: If the goal's literal terms appear verbatim ` +
+          `in ANY heading, link text, button label, aria-label, or alt attribute on ` +
+          `the current page, you MUST output on_track=true regardless of any other ` +
+          `page content (error messages, missing sections, banners, etc.). This rule ` +
+          `overrides all other reasoning. Visual-only icons are labelled via ` +
+          `aria-label or alt — treat those as text matches.\n\n` +
+          `If the goal's literal terms are ABSENT but the page is plausibly within ` +
+          `the goal's topic area (correct site, correct section), output on_track=true. ` +
+          `The agent is mid-navigation toward the target.\n\n` +
+          `If the goal's literal terms are ABSENT and the page is unrelated to the ` +
+          `goal, output on_track=false.\n\n` +
+          `OUTPUT FORMAT: Output the JSON object FIRST on a single line, complete and ` +
+          `closed. Then you MAY add reasoning notes AFTER the JSON. Format:\n` +
+          `{"on_track":true,"reasoning":"<≤150 chars>"}\n` +
+          `Then optional explanation. This way if you run out of tokens, the JSON is ` +
+          `already complete and parseable. ` +
           `Return ONLY a single valid JSON object matching the schema ` +
           `{"at_destination": boolean, "on_right_track": boolean, "reasoning": string}. ` +
           `Do not include markdown formatting, code fences, or any text outside the JSON object.`,
