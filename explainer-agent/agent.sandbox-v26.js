@@ -243,9 +243,19 @@ async function callNemotronOmniJudge({ goal, screenshotPath }) {
       }
     }
     if (!parsed) {
-      log(`[nemotron-omni] could not parse (finish=${finishReason}): ${text.slice(0, 250)}`);
+      log(`[nemotron-omni-raw-on-parse-error] (finish=${finishReason})`);
+      log(text.split('\n').map((l) => `  ${l}`).join('\n'));
       parsed = { at_destination: false, on_right_track: true, reasoning: `judge parse error (finish=${finishReason}) — defaulted to on-track` };
     }
+  }
+  // Surface the omni judge's full reasoning text every round (success path too),
+  // so Dennis can see what the judge was actually considering — not just the
+  // distilled at_destination / on_right_track / short reasoning verdict.
+  const omniFullReasoning =
+    (data?.choices?.[0]?.message?.reasoning_content || '').trim();
+  if (omniFullReasoning) {
+    log(`[nemotron-omni-thinking]`);
+    log(omniFullReasoning.split('\n').map((l) => `  ${l}`).join('\n'));
   }
   return {
     at_destination: !!parsed.at_destination,
@@ -547,7 +557,12 @@ Reply with EXACTLY ONE of these JSON shapes:
     log(`[nemotron] retry with 3000 tokens (first call hit length cap)`);
     ({ text, reasoning, finish } = await callNemotron(messages, { maxTokens: 3000 }));
   }
-  log(`[nemotron] reasoning: ${reasoning.slice(0, 300)}`);
+  if (reasoning) {
+    log(`[nemotron-thinking]`);
+    log(reasoning.split('\n').map((l) => `  ${l}`).join('\n'));
+  } else {
+    log(`[nemotron-thinking] (empty reasoning_content)`);
+  }
   if (!text && reasoning) {
     log(`[nemotron] empty content; mining JSON from reasoning trace`);
     try { return { decision: parseJsonLoose(reasoning), reasoning }; } catch (e) {}
@@ -626,13 +641,20 @@ Return the top ${K} ranked candidates as specified.`,
     log(`[nemotron-topk] retry with 4000 tokens (first call hit length cap)`);
     ({ text, reasoning, finish } = await callNemotron(messages, { maxTokens: 4000 }));
   }
-  log(`[nemotron-topk] reasoning: ${reasoning.slice(0, 300)}`);
+  if (reasoning) {
+    log(`[nemotron-topk-thinking]`);
+    log(reasoning.split('\n').map((l) => `  ${l}`).join('\n'));
+  } else {
+    log(`[nemotron-topk-thinking] (empty reasoning_content)`);
+  }
   const raw = text || reasoning;
   let parsed;
   try {
     parsed = parseJsonLoose(raw);
   } catch (e) {
     log(`[nemotron-topk] could not parse top-K response: ${e.message}`);
+    log(`[nemotron-topk-raw-on-parse-error]`);
+    log(String(raw || '').split('\n').map((l) => `  ${l}`).join('\n'));
     // v21 hardened fallback: scan reasoning for click ids that look like candidate proposals.
     // Pattern: "candidate N: click ... (id X)" or "click <id N>" or "id N" mentioned positively.
     const idMatches = [...(raw || '').matchAll(/\b(?:click|id)\s*[#:]?\s*(?:id\s*)?(\d{1,3})\b/gi)];
