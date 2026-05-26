@@ -414,7 +414,7 @@ for (const { action, tSec } of distributed) {
 //
 // Heuristics:
 //   - Click cluster:   scale 1.4, hold = max(1.5s, time-until-next-nav - 0.8s)
-//   - Lone click:      subtle 1.12 emphasis, hold ~1.0s
+//   - Lone click:      subtle 1.2 emphasis, hold ~1.0s
 //   - Scroll:          scale 1.15, anchored at viewport vertical center,
 //                      slight directional bias (anchor shifts ±120px CSS for
 //                      down/up scrolls)
@@ -533,12 +533,12 @@ for (const members of clusters) {
       priority: 1, // cluster — keep first
     });
   } else {
-    // Lone click — subtle emphasis
+    // Lone click — subtle emphasis (spec bump 1.12 -> 1.2 per 2533d8a)
     pushTriple({
       targetCssX: cx,
       targetCssY: cy,
       anchorTSec: firstT,
-      scale: 1.12,
+      scale: 1.2,
       holdSec: Math.max(1.0, Math.min(2.0, tilNext - 0.8)),
       priority: 3, // lone click — first to drop
     });
