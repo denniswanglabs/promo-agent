@@ -136,7 +136,8 @@ const H = 1440;
 // Cinematic stage chrome (locked per spec 2026-05-26-cinematic-uv-crop-design.md)
 // Phase 4 wires the Big Sur gradient + spec-locked inset/radius/shadow values.
 // =====================
-const STAGE_GRADIENT = "linear-gradient(135deg, #0a0e1a 0%, #1e1b4b 100%)";
+const STAGE_GRADIENT =
+  "linear-gradient(180deg, #FD5C4C 0%, #EB4D5A 10%, #C5657D 22%, #3D3DA4 45%, #132D6B 70%, #0B1644 100%)";
 const FRAME_INSET_X = 256;   // px on each side, ~10% of 2560
 const FRAME_INSET_Y = 144;   // px on each side, ~10% of 1440
 const FRAME_RADIUS = 40;
