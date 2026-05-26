@@ -1,187 +1,170 @@
-# Promo Agent
+# Explainer Agent
 
-> Autonomous agent that turns a company URL into an animated promo video. Powered by **Nemotron 3 Super 120B** running inside **NemoClaw**, with policy-based guardrails enforcing scope, budget, and content discipline. No human in the loop after the URL.
+> An autonomous web agent built on Nemotron 3 Super 120B for action selection and Nemotron 3 Nano Omni for visual judging, running under hard NemoClaw policy + seccomp guardrails — it watches itself navigate real docs and produces a cinematic walkthrough that's safe by construction, not by prompt.
 
 **Submission for NVIDIA GTC Taipei 2026 Hackathon.**
 
-**Live demo:** [promo-agent-kappa.vercel.app](https://promo-agent-kappa.vercel.app) — interactive gallery of nine real-brand renders, 27-second sizzle reel, architecture diagram, and NemoClaw policy walk-through.
+**Demo video:** `<YouTube URL — Luceo Studio channel, filled in at submission time>`
+
+---
+
+## What this took
+
+**29 rendered submission videos · 30+ orchestrated subagent dispatches · 7 architectural pivots · ~1865-line sandbox agent runtime · 5 demo sites · 4 documented Chromium-in-NemoClaw workarounds · 9 NemoClaw policy presets**
+
+The agent demos look polished. They are. Each one took real engineering:
+
+- **The two-pass architecture** (NemoClaw sandbox for discovery + host Playwright for cinematic recording) was forced by Playwright's `recordVideo` being silently incompatible with `connectOverCDP`. We discovered this only after building the single-pass version.
+- **The 60fps recording pipeline** uses Chrome DevTools Protocol `Page.startScreencast` piping JPEG frames + a `meta.jsonl` timestamp log directly to ffmpeg, because Playwright's built-in `recordVideo` caps at ~25fps with no flag to raise it, and silently no-ops when attached via `connectOverCDP`.
+- **The visual judge needed exception handling.** Nemotron 3 Nano Omni rejects subtle visual changes as "off-track" (tool-selection keypresses, intermediate Stripe sidebar pages, Excalidraw mode switches), so the agent runtime now has an auto-keep list for actions that have low visual feedback but high causal value. We also bumped `max_tokens: 1500 → 4000` and flipped the parse-fail default from `on_right_track: false → true` after diagnosing spurious rollbacks caused by the `-reasoning` variant's chain-of-thought trace getting truncated.
+- **The agent's action vocabulary grew from 3 to 5+** — original `click` / `scroll` / `done` couldn't draw shapes or run Cmd+K searches. We added `drag` and `keyboard` for the Excalidraw demo (v23), and the in-flight v24 work extends to `type` and `clickAt`. Each new action requires sandbox-side handlers, host-side replay handlers, prompt updates, and coord scaling between sandbox (1440×900) and host (2560×1440) viewports — that's a 1.7778× / 1.6× scale on every coordinate that crosses the boundary.
+- **NemoClaw outbound allowlist whack-a-mole.** Every new demo target requires identifying 3–5 subresource hosts (e.g. `docs.stripe.com`, `b.stripecdn.com`, `q.stripe.com`, plus telemetry endpoints) and adding them to the policy YAML. Nine presets shipped: `nemotron-direct`, `github-cdn`, `playwright-cdn`, `remotion-cdn`, `debian-mirror`, `higgsfield`, `brand-fetch`, `demo-targets`, `gemini` (legacy from pre-Nano-Omni judge era).
+- **Beam search wasn't free.** The K=4 parallel-scout architecture (`BEAM=1`, used in v21) required attaching per-context CDP screencast on every slot's page, a host-side stitcher (`/tmp/stitch-scouts.py`) that pads every slot to identical duration via `tpad=stop_mode=clone`, and a winner-fallback when Nemotron-Omni declares every branch off-track on hard goals.
+
+## Sample of the iteration log
+
+29 distinct submission videos shipped, plus v24 in flight at submission time. Compressed timeline:
+
+- **v1–v10** — single-pass discovery, Gemini judge, navigation-only vocabulary. Test bed: NeMo Framework PEFT page.
+- **v11–v13** — judge swap from Gemini to Nemotron 3 Nano Omni; sandbox/host split forced by recordVideo+connectOverCDP incompatibility discovery.
+- **v14–v15** — narrative pivot to NemoClaw's own docs as the demo target ("the agent navigates the docs of the sandbox it runs inside"). Judge-truncation bug fixed.
+- **v16–v18** — Stripe docs target, three-click multi-hop ("Find Map payment data"). Pixel-precise overlay re-timing against measured frame timestamps after a parallel-agent coord clobber.
+- **v19–v20** — slow-cursor polish pass.
+- **v21** — K=4 beam-search parallel-scout video; CDP screencast per slot; 2×2 grid + winner-zoom.
+- **v22 series** — 60fps CDP-screencast replacement of `recordVideo` (v22-60fps), full overlays (v22-overlayed), minimal-overlay variant (v22-overlayed-minimal), pixel-precise full overlay re-timed against the 60fps base (v22-overlayed-v2).
+- **v23** — Excalidraw "draw a square" demo; action-vocab extension to `drag` + `keyboard`; judge prompt extended with DRAWING-tasks paragraph; 5 excalidraw subresource hosts added to `demo-targets.yaml` (policy v42).
+- **v24** — NVIDIA-branded overlay revision (in flight at submission deadline).
+
+Per-version handoff docs live alongside this README at `.handoff-*.md`. Daily decisions and architectural pivots are recorded in `~/.claude/projects/-Users-dennis/memory/project_promo_agent.md` (Dennis's session memory; see `docs/superpowers/specs/2026-05-25-context-handoff.md` for a snapshotted excerpt).
 
 ---
 
 ## What it does
 
-Give it a company URL. Get back a 30-second kinetic-typography promo video.
+You give the agent a plain-English goal and a starting URL. It opens a real browser, reads the page, decides where to click, scrolls, backtracks when it goes the wrong way, and stops when it finds what you asked for. Then a second pass replays the discovered path with a smooth cursor overlay and saves the result as an MP4.
 
 ```
-You:    "Make a promo for https://benchling.com"
-Agent:  [fetches the brand, composes scenes, renders 900 frames]
-Out:    /sandbox/out.mp4   (3-7 MB, 30 sec @ 1920×1080)
-        Total time: ~90 sec.   Cost: $0.
+$ ./explainer-agent/make-explainer.sh \
+    "find the LoRA fine-tuning example for Nemotron" \
+    "https://docs.nvidia.com/nemoclaw/latest/home"
 ```
 
-The agent does every step end-to-end:
-1. **Research** the brand (palette, fonts, hero copy, customer quotes) via `fetch_brand.py`
-2. **Compose** a 5-scene `CompositionSpec` via a direct Nemotron call
-3. **Render** kinetic typography per-scene via Remotion (no image/video assets, $0 to generate)
+Output: a self-contained explainer video, no human in the loop.
 
-The MP4 is produced inside the NemoClaw secure sandbox. Network calls, file writes, and resource limits are all enforced by a declarative policy file ([`agent/policy.yaml`](agent/policy.yaml)) — that's the bonus-criterion deliverable.
+---
 
-## Architecture
+## The two-pass architecture
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│  User (dashboard chat OR CLI)                                    │
-│  "Make a promo for https://kolr.ai"                              │
-└────────────────────────────┬─────────────────────────────────────┘
-                             ▼
-┌──────────────────────────────────────────────────────────────────┐
-│  NemoClaw sandbox (Docker, policy-gated)                         │
-│                                                                  │
-│   OpenClaw agent runtime                                         │
-│      │                                                           │
-│      └─► openclaw:core:exec                                      │
-│            │                                                     │
-│            ▼                                                     │
-│         make_promo.sh <URL>                                      │
-│            │                                                     │
-│            ├─► fetch_brand.py  ──── HTTPS GET (brand-fetch)      │
-│            ├─► Nemotron API     ──── HTTPS POST (nemotron-direct)│
-│            ├─► write_remotion_project.py                         │
-│            └─► npx remotion render ── Chromium headless          │
-│                                                                  │
-│   Output: /sandbox/out.mp4                                       │
-└──────────────────────────────────────────────────────────────────┘
+The agent runs in two passes. The first pass discovers a path under kernel-enforced constraints. The second pass replays that path on the host to produce a high-quality recording.
 
-Policy: agent/policy.yaml — caps tool surface, network allowlist, binary whitelist.
-Custom policy presets at agent/presets/ — applied via `nemoclaw promo-agent policy-add`.
-```
+![Architecture diagram](docs/architecture.svg)
 
-## NVIDIA AI ecosystem used
+### Pass 1 — discovery (inside NemoClaw sandbox)
 
-- **Nemotron 3 Super 120B** (`nvidia/nemotron-3-super-120b-a12b`) via NVIDIA NIM at `build.nvidia.com` — composition planner
-- **NemoClaw v0.0.50** — secured agent runtime (the ⭐ bonus-criterion stack)
-- **OpenClaw v2026.5.18** — agent framework inside NemoClaw
+`agent.js` spawns Chromium with the four load-bearing flags required to survive NemoClaw's syscall filter ([feedback note](docs/superpowers/specs/2026-05-25-context-handoff.md#5-the-4-architectural-fixes-that-are-load-bearing)) and connects via `connectOverCDP`. Each step:
 
-## Quick start
+1. The accessibility tree + a screenshot are sent to **Nemotron 3 Super 120B** (NVIDIA NIM) for action selection — `{click, scroll, done}`.
+2. The action is executed in Chromium.
+3. The post-action screenshot + goal text are sent to **Nemotron 3 Nano Omni 30B** (NVIDIA NIM) for visual judging — `{at_destination, on_right_track, reasoning}`.
+4. If the judge says "off track," `page.goto(previousUrl)` rolls back and that branch is discarded. Otherwise the action is kept.
+5. Loop until `done` or `max_steps`.
+
+The filtered `action-log.json` plus the kept screenshots are the only artifacts that cross the sandbox boundary back to the host.
+
+### Pass 2 — performance (on host)
+
+`performer-v11/replay.js` reads the action log, launches headless Chromium via `chromium.launch()` with `recordVideo`, replays the path with an injected SVG cursor + lime click ripples + cubic-eased smooth scrolls, and writes a clean MP4. The recording pass runs on the host rather than inside the sandbox because Playwright's `recordVideo` does not work with `connectOverCDP` — and the sandbox forces `connectOverCDP` via the netlink workaround. Splitting the work this way keeps the discovery side under policy and the rendering side at full fidelity.
+
+### Why two models
+
+- **Nemotron 3 Super 120B** is the action selector. It reasons over the accessibility tree, weighs which link is most likely to advance toward the goal, and emits a single structured action.
+- **Nemotron 3 Nano Omni 30B** is the visual judge. It sees the resulting page screenshot and answers whether the agent is closer to the goal or should roll back. Using a smaller multimodal model as a critic catches dead ends the planner misses, without paying Super 120B latency on every step.
+
+Every model in the loop is an NVIDIA Nemotron model called through NVIDIA NIM. There are no third-party model providers anywhere in this submission.
+
+---
+
+## Why this matters
+
+The hackathon theme is **agent autonomy with guardrails**. Most "agent safety" stories are prompt-shaped: the model is asked nicely not to misbehave. This project takes the opposite approach.
+
+Inside the sandbox, the agent has full Nemotron-driven autonomy. It picks every click, every scroll, every backtrack. Nothing in the prompt restricts where it can go. The restriction lives below the agent — at three layers that the model cannot reach:
+
+| Layer | Enforcement | Effect |
+|---|---|---|
+| **Network** | Policy proxy at `10.200.0.1:3128`, whitelist defined in 8 YAML presets under `agent/presets/` | A request to a non-whitelisted host returns `403 policy_denied` at CONNECT, before any TLS handshake. A jailbroken agent emitting `https://api.openai.com/...` cannot exfiltrate — the tunnel never opens. |
+| **Kernel** | seccomp filter (`Seccomp: 2`, 4 stacked filters), `NoNewPrivs: 1`, `CapEff: 0` | `socket(AF_NETLINK, ...)` returns `EPERM`. This is the load-bearing reason Chromium needs its `NetworkServiceInProcess` workaround — even a process as sophisticated as Chrome has to bend to the filter. |
+| **Filesystem** | Writable root scoped to `/sandbox` and `/tmp`; `/`, `/etc`, and `/Users/dennis` are unwritable or non-existent | A compromised npm transitive dep cannot reach `~/.ssh`, `~/.aws`, or any host config. |
+
+The full evidence — captured 403s, the allowed-host control, `/proc/self/status`, the netlink EPERM, the filesystem write tests — is in [`docs/nemoclaw-audit.md`](docs/nemoclaw-audit.md). Every claim is line-cited against the preset YAMLs and reproducible from the appendix.
+
+This is what "agent autonomy + guardrails" looks like when the guardrails are real: the agent can want to go anywhere, and it still can't.
+
+---
+
+## Run it yourself
 
 ### Prerequisites
 
-- macOS or Linux (arm64 or x86_64)
-- Docker Desktop (≥16 GB memory allocated)
-- Node 22.16+ and npm 10+
-- Python 3.11+
-- `jq`
-- NVIDIA API key from [build.nvidia.com](https://build.nvidia.com)
-- Higgsfield credits *(optional, only for `--mode=asset` path — kinetic mode needs no Higgsfield)*
+- macOS or Linux
+- Docker Desktop
+- Node 22+
+- `NVIDIA_API_KEY` exported in your shell (the single key powers both the action selector and the judge — they share the NIM endpoint)
+- NemoClaw installed with a sandbox named `promo-agent`
 
-### Install
+### One-shot
 
 ```bash
-# 1. Install NemoClaw (interactive — pick NVIDIA Endpoints + Nemotron 3 Super 120B)
-curl -fsSL https://www.nvidia.com/nemoclaw.sh | bash
-
-# 2. Clone this repo
-git clone https://github.com/<YOUR-USER>/promo-agent.git
+git clone <REPO_URL> promo-agent
 cd promo-agent
 
-# 3. Apply our policy presets to the running sandbox
+# Apply the 8 policy presets to the sandbox
 for f in agent/presets/*.yaml; do
   nemoclaw promo-agent policy-add --from-file "$f" --yes
 done
 
-# 4. Install Chrome libs in the sandbox (one-time, no sudo needed)
-nemoclaw promo-agent exec -- bash -c '
-  cd /tmp && mkdir -p chrome-libs && cd chrome-libs &&
-  curl -sL "https://deb.debian.org/debian/dists/trixie/main/binary-arm64/Packages.gz" -o /tmp/Packages.gz &&
-  gunzip -f /tmp/Packages.gz &&
-  for pkg in libnspr4 libnss3; do
-    FN=$(awk -v p="$pkg" "/^Package: /{name=\$2} name==p && /^Filename: /{print \$2; exit}" /tmp/Packages);
-    curl -fsSL -o "${pkg}.deb" "https://deb.debian.org/debian/$FN";
-  done &&
-  mkdir -p extracted &&
-  for f in libnspr4.deb libnss3.deb; do dpkg-deb -x "$f" extracted/; done
-'
+# Push the agent into the sandbox
+cat /tmp/sandbox-agent.js | base64 \
+  | nemoclaw promo-agent exec -- bash -c 'base64 -d > /sandbox/explainer-agent/agent.js'
 
-# 5. Inject NVIDIA_API_KEY into the sandbox
-printf 'export NVIDIA_API_KEY=%s\n' "$NVIDIA_API_KEY" \
-  | base64 \
-  | { B=$(cat); nemoclaw promo-agent exec -- bash -c "mkdir -p /sandbox/.config/promo-agent && printf '%s' '$B' | base64 -d > /sandbox/.config/promo-agent/env.sh && chmod 600 /sandbox/.config/promo-agent/env.sh"; }
-
-# 6. Install the promo skill
-nemoclaw promo-agent skill install ./agent/skills/promo
-nemoclaw promo-agent exec -- chmod +x \
-  /sandbox/.openclaw/skills/promo/scripts/make_promo.sh \
-  /sandbox/.openclaw/skills/promo/scripts/write_remotion_project.py
+# Run end-to-end (discovery + performance + render)
+./explainer-agent/make-explainer.sh \
+  "find the LoRA fine-tuning example for Nemotron" \
+  "https://docs.nvidia.com/nemoclaw/latest/home" \
+  20
 ```
 
-### Run
+`make-explainer.sh` accepts three arguments: `"<goal>" "<start_url>" [max_steps]`. The output MP4 lands in `explainer-agent/` with a timestamp + slug filename.
 
-**Option A — From CLI (deterministic, fast):**
-```bash
-nemoclaw promo-agent exec -- bash /sandbox/.openclaw/skills/promo/scripts/make_promo.sh https://benchling.com /sandbox/out.mp4
-```
-~90 seconds → `/sandbox/out.mp4` (kinetic-typography MP4)
+The default demo URL is NemoClaw's own documentation — the agent navigating the docs of the sandbox it runs inside. That is intentional.
 
-**Option B — Via the agent (autonomous loop):**
-```
-Open the OpenClaw dashboard:  nemoclaw promo-agent dashboard-url
+---
 
-Type in chat:  "Make a promo video for https://kolr.ai"
-```
-The agent loads the [`promo`](agent/skills/promo/SKILL.md) skill, calls `openclaw:core:exec` once with the bash command, reports when done.
-
-## Repo layout
+## Repo structure
 
 ```
 promo-agent/
-├── README.md                 (this file)
-├── docs/
-│   ├── 2026-05-24-promo-agent-design.md     — Full architectural spec
-│   └── 2026-05-24-promo-agent-plan.md       — Implementation plan
+├── README.md                                  this file
+├── SUBMISSION.md                              hackathon judge narrative
 ├── agent/
-│   ├── policy.yaml           — NemoClaw guardrail config (the bonus deliverable)
-│   ├── presets/              — Custom NemoClaw network policy presets
-│   │   ├── higgsfield.yaml         (kept for asset-mode; deferred for v2)
-│   │   ├── github-cdn.yaml
-│   │   ├── remotion-cdn.yaml
-│   │   ├── debian-mirror.yaml
-│   │   ├── brand-fetch.yaml
-│   │   └── nemotron-direct.yaml
-│   └── skills/
-│       ├── promo/            — The skill the agent uses (kinetic mode)
-│       │   ├── SKILL.md
-│       │   └── scripts/
-│       │       ├── make_promo.sh
-│       │       ├── write_remotion_project.py
-│       │       └── templates/KineticPromo.tsx.template
-│       ├── promo-research/   — Brand-research helper (fetch_brand.py)
-│       └── render-promo/     — Original asset-mode skill (deferred v2)
-└── watchdog/                 — Runtime monitoring scaffolding (used during dev)
+│   └── presets/                               8 NemoClaw policy presets (network whitelist)
+├── explainer-agent/
+│   ├── make-explainer.sh                      host-side entrypoint
+│   ├── agent.js                               sandbox-side discovery loop (staging copy)
+│   ├── performer-v11/replay.js                host-side performance + recording
+│   ├── collapse-actions.mjs                   post-processor: collapses oscillating scrolls
+│   ├── remotion/                              alternate native-rebuild composition path
+│   └── guardrail-clip/evidence/               captured 403 / seccomp / fs-isolation artifacts
+└── docs/
+    ├── architecture.svg                       two-pass architecture diagram
+    ├── nemoclaw-audit.md                      evidence-cited policy audit
+    └── nemoclaw-audit.docx                    shipped audit (10 pages, 6 figures)
 ```
 
-## How the guardrails work (the bonus story)
+---
 
-[`agent/policy.yaml`](agent/policy.yaml) enforces hard caps via NemoClaw's policy engine. Two highlights:
+## License + contact
 
-- **Tool whitelist** — agent can only call the 6 listed tools; everything else is denied at the runtime layer.
-- **Network allowlist** — the sandbox proxy denies outbound HTTPS by default. Each policy preset under `agent/presets/` opens a narrow surface (Nemotron API, Debian package mirror, specific brand domains).
+License: `<TBD — Dennis to fill>`
 
-A real-world enforcement example from build: when `make_promo.sh` first tried to curl Higgsfield's CDN at `d8j0ntlcm91z4.cloudfront.net`, the sandbox proxy returned **403 Forbidden** until we added it to the `higgsfield` preset. The policy isn't theoretical — it's the only thing letting traffic out.
-
-## Demo video
-
-[YouTube link — Luceo Studio channel]   *(filled in at submission time)*
-
-## What's deferred to v2
-
-- **Higgsfield-asset mode** — adds photo-real images and Seedance video clips. Wired (`--mode=asset`) but kinetic is the v1 demo.
-- **Modal-rendered cloud deploy** — production path per the spec.
-- **Multi-format export** — 9:16 vertical, 1:1 square. v1 is 16:9 only.
-- **Reference-video style matching** (Nemotron 3 Nano Omni multimodal) — premium tier.
-
-## Credits
-
-Built solo by [Dennis Wang](https://github.com/denniswanglabs) for Luceo Studio.
-Submitted to NVIDIA GTC Taipei 2026 Hackathon.
-
-Motion patterns adapted from prior Luceo Studio kinetic-light projects (Orinovate, alai-promo).
+Contact: Dennis Wang — `<email — Dennis to fill>` — built solo for Luceo Studio.

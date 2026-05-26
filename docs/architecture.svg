@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 940" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3f3f46"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#76b900"/>
+    </marker>
+    <marker id="arrowLime" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#65a30d"/>
+    </marker>
+  </defs>
+
+  <!-- Footnote marker style: small filled circle + number, anchored beside the component it annotates -->
+  <defs>
+    <style>
+      .fn-circle { fill: #dc2626; stroke: #7f1d1d; stroke-width: 0.8; }
+      .fn-num    { font-size: 9px; font-weight: 700; fill: #ffffff; text-anchor: middle; dominant-baseline: central; }
+      .fn-text   { font-size: 10.5px; fill: #18181b; }
+      .fn-text-b { font-size: 10.5px; font-weight: 700; fill: #18181b; }
+      .iter-tick { fill: #71717a; }
+      .iter-tick-major { fill: #18181b; }
+      .iter-label { font-size: 9px; fill: #52525b; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#18181b">Explainer Agent — Two-Pass Architecture</text>
+  <text x="600" y="58" text-anchor="middle" font-size="13" fill="#52525b">Discovery runs under policy. Performance runs at full fidelity. Action log is the bridge.</text>
+  <text x="600" y="76" text-anchor="middle" font-size="11" font-style="italic" fill="#dc2626">Red markers flag load-bearing engineering investments — see legend at bottom.</text>
+
+  <!-- LEFT BOX: Discovery (NemoClaw sandbox) -->
+  <rect x="40" y="90" width="520" height="430" rx="12" fill="#fafafa" stroke="#18181b" stroke-width="2"/>
+  <rect x="40" y="90" width="520" height="36" rx="12" fill="#18181b"/>
+  <rect x="40" y="114" width="520" height="12" fill="#18181b"/>
+  <text x="56" y="114" font-size="14" font-weight="700" fill="#fafafa">DISCOVERY  ·  NemoClaw sandbox</text>
+
+  <!-- agent.js -->
+  <rect x="70" y="150" width="200" height="50" rx="6" fill="#e4e4e7" stroke="#71717a" stroke-width="1"/>
+  <text x="170" y="172" text-anchor="middle" font-size="13" font-weight="600" fill="#18181b">agent.js</text>
+  <text x="170" y="190" text-anchor="middle" font-size="11" fill="#52525b">discovery loop</text>
+
+  <!-- Nemotron Super 120B (action selection) -->
+  <rect x="330" y="150" width="200" height="50" rx="6" fill="#76b900" stroke="#5a8e00" stroke-width="1"/>
+  <text x="430" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="#0a0a0a">Nemotron 3 Super 120B</text>
+  <text x="430" y="190" text-anchor="middle" font-size="11" fill="#0a0a0a">action selection · NVIDIA NIM</text>
+  <!-- footnote 5: action vocabulary -->
+  <circle class="fn-circle" cx="540" cy="150" r="9"/>
+  <text class="fn-num" x="540" y="150">5</text>
+
+  <!-- arrow agent → Super 120B -->
+  <line x1="270" y1="175" x2="328" y2="175" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="299" y="168" text-anchor="middle" font-size="10" fill="#52525b">a11y tree + screenshot</text>
+
+  <!-- arrow back: action -->
+  <line x1="328" y1="190" x2="272" y2="220" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="305" y="218" text-anchor="end" font-size="10" fill="#52525b">{click | scroll | done}</text>
+
+  <!-- Chromium (Playwright via CDP) -->
+  <rect x="70" y="240" width="460" height="50" rx="6" fill="#84cc16" stroke="#65a30d" stroke-width="1"/>
+  <text x="300" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#0a0a0a">Chromium  ·  Playwright via connectOverCDP</text>
+  <text x="300" y="280" text-anchor="middle" font-size="11" fill="#0a0a0a">spawned with NetworkServiceInProcess + IPv4 bind + unique --user-data-dir</text>
+  <!-- footnote 3: 4 chromium workarounds -->
+  <circle class="fn-circle" cx="540" cy="240" r="9"/>
+  <text class="fn-num" x="540" y="240">3</text>
+
+  <!-- arrow from agent loop down to Chromium -->
+  <line x1="170" y1="200" x2="170" y2="238" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- arrow Chromium → judge -->
+  <line x1="300" y1="290" x2="430" y2="328" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="408" y="315" text-anchor="end" font-size="10" fill="#52525b">post-action screenshot</text>
+
+  <!-- Nemotron Nano Omni (visual judge) -->
+  <rect x="330" y="330" width="200" height="50" rx="6" fill="#76b900" stroke="#5a8e00" stroke-width="1"/>
+  <text x="430" y="352" text-anchor="middle" font-size="13" font-weight="700" fill="#0a0a0a">Nemotron 3 Nano Omni</text>
+  <text x="430" y="370" text-anchor="middle" font-size="11" fill="#0a0a0a">visual judge · NVIDIA NIM</text>
+  <!-- footnote 2: judge exception handling -->
+  <circle class="fn-circle" cx="540" cy="330" r="9"/>
+  <text class="fn-num" x="540" y="330">2</text>
+
+  <!-- arrow judge → keep/rollback decision -->
+  <line x1="328" y1="355" x2="272" y2="355" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- keep / rollback decision -->
+  <rect x="70" y="330" width="200" height="50" rx="6" fill="#e4e4e7" stroke="#71717a" stroke-width="1"/>
+  <text x="170" y="352" text-anchor="middle" font-size="13" font-weight="600" fill="#18181b">keep  ·  or rollback</text>
+  <text x="170" y="370" text-anchor="middle" font-size="11" fill="#52525b">page.goto(previousUrl)</text>
+
+  <!-- action-log.json -->
+  <rect x="170" y="420" width="260" height="50" rx="6" fill="#fef3c7" stroke="#a16207" stroke-width="1.5"/>
+  <text x="300" y="442" text-anchor="middle" font-size="13" font-weight="700" fill="#451a03">action-log.json</text>
+  <text x="300" y="460" text-anchor="middle" font-size="11" fill="#78350f">filtered actions + kept screenshots</text>
+
+  <!-- arrow keep → action-log -->
+  <line x1="170" y1="382" x2="220" y2="418" stroke="#65a30d" stroke-width="1.5" marker-end="url(#arrowLime)"/>
+  <line x1="170" y1="200" x2="170" y2="200" stroke="none"/>
+
+  <!-- Constraints callout under DISCOVERY -->
+  <rect x="40" y="540" width="520" height="160" rx="10" fill="#18181b" stroke="#27272a" stroke-width="1"/>
+  <text x="60" y="566" font-size="13" font-weight="700" fill="#fafafa">NemoClaw enforces  ·  three independent layers</text>
+
+  <rect x="60" y="582" width="160" height="100" rx="6" fill="#27272a"/>
+  <text x="140" y="604" text-anchor="middle" font-size="12" font-weight="700" fill="#76b900">network</text>
+  <text x="140" y="624" text-anchor="middle" font-size="10" fill="#e4e4e7">policy proxy at</text>
+  <text x="140" y="638" text-anchor="middle" font-size="10" fill="#e4e4e7">10.200.0.1:3128</text>
+  <text x="140" y="656" text-anchor="middle" font-size="10" fill="#a1a1aa">8 YAML whitelist</text>
+  <text x="140" y="670" text-anchor="middle" font-size="10" fill="#a1a1aa">presets → CONNECT 403</text>
+
+  <rect x="230" y="582" width="160" height="100" rx="6" fill="#27272a"/>
+  <text x="310" y="604" text-anchor="middle" font-size="12" font-weight="700" fill="#76b900">kernel</text>
+  <text x="310" y="624" text-anchor="middle" font-size="10" fill="#e4e4e7">seccomp filter</text>
+  <text x="310" y="638" text-anchor="middle" font-size="10" fill="#e4e4e7">(Seccomp: 2, 4 filters)</text>
+  <text x="310" y="656" text-anchor="middle" font-size="10" fill="#a1a1aa">AF_NETLINK blocked,</text>
+  <text x="310" y="670" text-anchor="middle" font-size="10" fill="#a1a1aa">CapEff: 0, NoNewPrivs: 1</text>
+
+  <rect x="400" y="582" width="140" height="100" rx="6" fill="#27272a"/>
+  <text x="470" y="604" text-anchor="middle" font-size="12" font-weight="700" fill="#76b900">filesystem</text>
+  <text x="470" y="624" text-anchor="middle" font-size="10" fill="#e4e4e7">writable root:</text>
+  <text x="470" y="638" text-anchor="middle" font-size="10" fill="#e4e4e7">/sandbox + /tmp</text>
+  <text x="470" y="656" text-anchor="middle" font-size="10" fill="#a1a1aa">/etc, /Users/dennis</text>
+  <text x="470" y="670" text-anchor="middle" font-size="10" fill="#a1a1aa">unreachable</text>
+
+  <!-- BRIDGE arrow -->
+  <line x1="565" y1="445" x2="635" y2="445" stroke="#a16207" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="600" y="430" text-anchor="middle" font-size="10" font-weight="600" fill="#78350f">action-log.json</text>
+  <text x="600" y="465" text-anchor="middle" font-size="10" fill="#78350f">sandbox → host</text>
+  <!-- footnote 1: the two-pass split itself -->
+  <circle class="fn-circle" cx="600" cy="408" r="9"/>
+  <text class="fn-num" x="600" y="408">1</text>
+
+  <!-- RIGHT BOX: Performance (host) -->
+  <rect x="640" y="90" width="520" height="430" rx="12" fill="#fafafa" stroke="#18181b" stroke-width="2"/>
+  <rect x="640" y="90" width="520" height="36" rx="12" fill="#18181b"/>
+  <rect x="640" y="114" width="520" height="12" fill="#18181b"/>
+  <text x="656" y="114" font-size="14" font-weight="700" fill="#fafafa">PERFORMANCE  ·  host</text>
+
+  <!-- action-log.json (host side) -->
+  <rect x="770" y="150" width="260" height="50" rx="6" fill="#fef3c7" stroke="#a16207" stroke-width="1.5"/>
+  <text x="900" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="#451a03">action-log.json</text>
+  <text x="900" y="190" text-anchor="middle" font-size="11" fill="#78350f">input to performer</text>
+
+  <!-- replay.js -->
+  <rect x="770" y="230" width="260" height="60" rx="6" fill="#84cc16" stroke="#65a30d" stroke-width="1"/>
+  <text x="900" y="254" text-anchor="middle" font-size="13" font-weight="700" fill="#0a0a0a">performer-v11 / replay.js</text>
+  <text x="900" y="272" text-anchor="middle" font-size="11" fill="#0a0a0a">Playwright chromium.launch()</text>
+  <text x="900" y="286" text-anchor="middle" font-size="11" fill="#0a0a0a">with recordVideo · 2560×1440  →  60fps CDP screencast (v22+)</text>
+  <!-- footnote 4: recording pipeline -->
+  <circle class="fn-circle" cx="1040" cy="230" r="9"/>
+  <text class="fn-num" x="1040" y="230">4</text>
+
+  <!-- arrow action-log → replay -->
+  <line x1="900" y1="200" x2="900" y2="228" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- cursor + ripple injection -->
+  <rect x="670" y="320" width="200" height="60" rx="6" fill="#e4e4e7" stroke="#71717a" stroke-width="1"/>
+  <text x="770" y="344" text-anchor="middle" font-size="12" font-weight="600" fill="#18181b">SVG cursor overlay</text>
+  <text x="770" y="360" text-anchor="middle" font-size="11" fill="#52525b">lime click ripples</text>
+  <text x="770" y="374" text-anchor="middle" font-size="11" fill="#52525b">cubic-eased scroll</text>
+
+  <rect x="930" y="320" width="200" height="60" rx="6" fill="#e4e4e7" stroke="#71717a" stroke-width="1"/>
+  <text x="1030" y="344" text-anchor="middle" font-size="12" font-weight="600" fill="#18181b">collapse-actions.mjs</text>
+  <text x="1030" y="360" text-anchor="middle" font-size="11" fill="#52525b">oscillating scrolls</text>
+  <text x="1030" y="374" text-anchor="middle" font-size="11" fill="#52525b">→ monotonic</text>
+
+  <!-- arrows replay → overlays -->
+  <line x1="830" y1="290" x2="780" y2="318" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="970" y1="290" x2="1020" y2="318" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ffmpeg post -->
+  <rect x="770" y="410" width="260" height="50" rx="6" fill="#e4e4e7" stroke="#71717a" stroke-width="1"/>
+  <text x="900" y="432" text-anchor="middle" font-size="13" font-weight="600" fill="#18181b">ffmpeg post-process</text>
+  <text x="900" y="450" text-anchor="middle" font-size="11" fill="#52525b">encode + trim</text>
+
+  <!-- arrow overlays → ffmpeg -->
+  <line x1="770" y1="380" x2="830" y2="408" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="1030" y1="380" x2="970" y2="408" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- MP4 output -->
+  <rect x="770" y="485" width="260" height="40" rx="6" fill="#0a0a0a" stroke="#000000" stroke-width="1"/>
+  <text x="900" y="510" text-anchor="middle" font-size="14" font-weight="700" fill="#84cc16">walkthrough.mp4</text>
+
+  <!-- arrow ffmpeg → mp4 -->
+  <line x1="900" y1="460" x2="900" y2="483" stroke="#3f3f46" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Why split: footer note under right column -->
+  <rect x="640" y="540" width="520" height="160" rx="10" fill="#f4f4f5" stroke="#a1a1aa" stroke-width="1"/>
+  <text x="660" y="566" font-size="13" font-weight="700" fill="#18181b">why the split?</text>
+  <text x="660" y="590" font-size="11" fill="#3f3f46">Playwright's recordVideo does not work over connectOverCDP — and the</text>
+  <text x="660" y="606" font-size="11" fill="#3f3f46">sandbox forces connectOverCDP via the netlink workaround. So discovery</text>
+  <text x="660" y="622" font-size="11" fill="#3f3f46">runs under policy with CDP; performance runs on the host with launch().</text>
+  <text x="660" y="650" font-size="11" fill="#3f3f46">Only the filtered action log crosses the boundary. Nothing the agent</text>
+  <text x="660" y="666" font-size="11" fill="#3f3f46">touched in the sandbox can reach the host filesystem directly.</text>
+  <text x="660" y="688" font-size="11" font-style="italic" fill="#52525b">NVIDIA green  ·  Nemotron models. Lime  ·  our orchestration.</text>
+
+  <!-- ===== FOOTNOTE LEGEND ===== -->
+  <rect x="40" y="720" width="1120" height="130" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="56" y="744" font-size="13" font-weight="700" fill="#7f1d1d">Load-bearing engineering — what's behind each red marker</text>
+
+  <!-- footnote 1 -->
+  <circle class="fn-circle" cx="62" cy="768" r="9"/>
+  <text class="fn-num" x="62" y="768">1</text>
+  <text class="fn-text-b" x="80" y="772">Two-pass split</text>
+  <text class="fn-text" x="80" y="786">Forced by Playwright recordVideo + connectOverCDP incompatibility (silent no-op). Discovered after the single-pass version.</text>
+
+  <!-- footnote 2 -->
+  <circle class="fn-circle" cx="62" cy="806" r="9"/>
+  <text class="fn-num" x="62" y="806">2</text>
+  <text class="fn-text-b" x="80" y="810">Judge exception handler</text>
+  <text class="fn-text" x="80" y="824">Nano Omni filters subtle visual feedback as off-track. Keyboard / tool-select actions auto-kept; max_tokens 1500→4000; parse-fail default flipped to on_right_track:true.</text>
+
+  <!-- footnote 3 -->
+  <circle class="fn-circle" cx="620" cy="768" r="9"/>
+  <text class="fn-num" x="620" y="768">3</text>
+  <text class="fn-text-b" x="638" y="772">4 Chromium-in-NemoClaw workarounds</text>
+  <text class="fn-text" x="638" y="786">NetworkServiceInProcess + disable NetworkService; connectOverCDP (not chromium.launch); --ignore-certificate-errors (proxy MITM); --use-angle=swiftshader-webgl.</text>
+
+  <!-- footnote 4 -->
+  <circle class="fn-circle" cx="620" cy="806" r="9"/>
+  <text class="fn-num" x="620" y="806">4</text>
+  <text class="fn-text-b" x="638" y="810">Recording pipeline</text>
+  <text class="fn-text" x="638" y="824">CDP Page.startScreencast → JPEG frames + meta.jsonl → ffmpeg (60fps). Replaces Playwright recordVideo's ~25fps cap; also supports per-context recording for BEAM=1.</text>
+
+  <!-- footnote 5 -->
+  <circle class="fn-circle" cx="62" cy="838" r="9"/>
+  <text class="fn-num" x="62" y="838">5</text>
+  <text class="fn-text-b" x="80" y="842">Action vocabulary</text>
+  <text class="fn-text" x="80" y="856">5 action types in v23: click, scroll, drag, keyboard, done. v24 in flight adds type + clickAt. Each requires sandbox handler + host replay handler + prompt update + 1440×900 → 2560×1440 coord scaling.</text>
+
+  <!-- ===== ITERATION TIMELINE ===== -->
+  <rect x="40" y="868" width="1120" height="60" rx="8" fill="#0a0a0a" stroke="#27272a" stroke-width="1"/>
+  <text x="56" y="888" font-size="11" font-weight="700" fill="#fafafa">3-day iteration timeline  ·  29 rendered submission videos  ·  30+ orchestrated subagent dispatches  ·  9 NemoClaw policy presets  ·  ~1865-line sandbox agent runtime</text>
+
+  <!-- Timeline track -->
+  <line x1="60" y1="912" x2="1140" y2="912" stroke="#52525b" stroke-width="1.5"/>
+
+  <!-- 21 tick marks for v1..v24 (skipping v6, v10, v13 — never rendered) -->
+  <!-- Spread evenly across 1080px from x=60 to x=1140; 21 ticks → step ~54px -->
+  <g>
+    <circle class="iter-tick" cx="60"   cy="912" r="3"/><text class="iter-label" x="60"   y="926">v1</text>
+    <circle class="iter-tick" cx="114"  cy="912" r="3"/><text class="iter-label" x="114"  y="926">v2</text>
+    <circle class="iter-tick" cx="168"  cy="912" r="3"/><text class="iter-label" x="168"  y="926">v3</text>
+    <circle class="iter-tick" cx="222"  cy="912" r="3"/><text class="iter-label" x="222"  y="926">v4</text>
+    <circle class="iter-tick" cx="276"  cy="912" r="3"/><text class="iter-label" x="276"  y="926">v5</text>
+    <circle class="iter-tick" cx="330"  cy="912" r="3"/><text class="iter-label" x="330"  y="926">v7</text>
+    <circle class="iter-tick" cx="384"  cy="912" r="3"/><text class="iter-label" x="384"  y="926">v8</text>
+    <circle class="iter-tick" cx="438"  cy="912" r="3"/><text class="iter-label" x="438"  y="926">v9</text>
+    <circle class="iter-tick" cx="492"  cy="912" r="3"/><text class="iter-label" x="492"  y="926">v11</text>
+    <!-- v12 cluster (12, 12b, 12c, 12d, 12e, 12e-alt) — single thicker tick to flag the cluster -->
+    <circle class="iter-tick-major" cx="546"  cy="912" r="4.5"/><text class="iter-label" x="546"  y="926">v12 ×6</text>
+    <circle class="iter-tick" cx="600"  cy="912" r="3"/><text class="iter-label" x="600"  y="926">v14</text>
+    <circle class="iter-tick" cx="654"  cy="912" r="3"/><text class="iter-label" x="654"  y="926">v15</text>
+    <circle class="iter-tick" cx="708"  cy="912" r="3"/><text class="iter-label" x="708"  y="926">v16</text>
+    <circle class="iter-tick" cx="762"  cy="912" r="3"/><text class="iter-label" x="762"  y="926">v17</text>
+    <circle class="iter-tick" cx="816"  cy="912" r="3"/><text class="iter-label" x="816"  y="926">v18</text>
+    <circle class="iter-tick" cx="870"  cy="912" r="3"/><text class="iter-label" x="870"  y="926">v19</text>
+    <circle class="iter-tick" cx="924"  cy="912" r="3"/><text class="iter-label" x="924"  y="926">v20</text>
+    <circle class="iter-tick-major" cx="978"  cy="912" r="4.5"/><text class="iter-label" x="978"  y="926">v21 beam</text>
+    <!-- v22 cluster (60fps, overlayed, overlayed-minimal, overlayed-v2) -->
+    <circle class="iter-tick-major" cx="1032" cy="912" r="4.5"/><text class="iter-label" x="1032" y="926">v22 ×4</text>
+    <circle class="iter-tick-major" cx="1086" cy="912" r="4.5"/><text class="iter-label" x="1086" y="926">v23 draw</text>
+    <circle cx="1140" cy="912" r="4.5" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.8"/><text class="iter-label" x="1140" y="926" fill="#dc2626" font-weight="700">v24 wip</text>
+  </g>
+</svg>
