@@ -71,8 +71,11 @@ edge_snap:      0.075 (outer 7.5% pins instead of trying to center past the edge
 
 ```
 Stage:
-  background: linear-gradient(135deg, #0a0e1a 0%, #1e1b4b 100%)
-              // dark navy → indigo; doesn't compete with screen content
+  background: linear-gradient(180deg, #FD5C4C 0%, #EB4D5A 10%, #C5657D 22%, #3D3DA4 45%, #132D6B 70%, #0B1644 100%)
+              // "Big Sur classic" — warm coral top to deep navy bottom; navy floor frames the
+              // Stripe browser window without competing with its blue UI. Palette modeled on
+              // openscreen's bitmap wallpaper7 (provenance unclear; gradient CSS is fresh,
+              // not a bit-copy of the original asset).
 
 FramedScreen:
   position: absolute
@@ -123,7 +126,7 @@ Source-side suppression in `explainer-agent/performer-v11/replay-60fps.js`:
 - Wikipedia POC re-render with the new pipeline.
 - Pitch video reconstruction with the cinematic Stripe swap.
 - BGM mux on the new cinematic.
-- Stage gradient alternatives (Cap flat / SS aurora) — locked to navy→indigo.
+- Stage gradient locked to "Big Sur classic" (linear-gradient 180deg, coral → navy). Alternatives surfaced in the openscreen teardown (Ventura amber-on-navy, Dusk-mountain teal) deferred unless a future render review surfaces a problem.
 
 ## Open questions
 
