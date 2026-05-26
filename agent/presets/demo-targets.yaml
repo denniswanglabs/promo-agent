@@ -251,5 +251,62 @@ network_policies:
       - host: static.youtube.com
         port: 443
         access: full
+      # Auto-added by auto-allowlist.sh
+      - host: www.ycombinator.com
+        port: 443
+        access: full
+      - host: cdn.www.ycombinator.com
+        port: 443
+        access: full
+      - host: assets.www.ycombinator.com
+        port: 443
+        access: full
+      - host: static.www.ycombinator.com
+        port: 443
+        access: full
+      - host: fonts.www.ycombinator.com
+        port: 443
+        access: full
+      - host: images.www.ycombinator.com
+        port: 443
+        access: full
+      - host: cdn.ycombinator.com
+        port: 443
+        access: full
+      - host: assets.ycombinator.com
+        port: 443
+        access: full
+      - host: static.ycombinator.com
+        port: 443
+        access: full
+      # v28 YC UI fix: the agent screencaps `https://www.ycombinator.com`
+      # rendered as a bare HTML page (no fonts/CSS/JS) because the entire
+      # YC SPA (CSS bundles, Vite chunks, React bundle, fonts) loads from
+      # `bookface-static.ycombinator.com` — a CDN host the auto-allowlist
+      # generic pattern (cdn.HOST / assets.HOST / static.HOST) does NOT
+      # match. Without this entry, `/` and `/library` render unstyled.
+      # cdn.dfsdk.com hosts the YC chatbot widget JS; posthog is analytics.
+      - host: bookface-static.ycombinator.com
+        port: 443
+        access: full
+      - host: bookface.ycombinator.com
+        port: 443
+        access: full
+      - host: cdn.dfsdk.com
+        port: 443
+        access: full
+      - host: app.posthog.com
+        port: 443
+        access: full
+      # Auto-added by auto-allowlist.sh
+      - host: account.ycombinator.com
+        port: 443
+        access: full
+      - host: deals.ycombinator.com
+        port: 443
+        access: full
+      - host: news.ycombinator.com
+        port: 443
+        access: full
     binaries:
       - { path: "/**" }
