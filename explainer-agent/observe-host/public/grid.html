@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>OpenClaw - Adaptive Multi-Scout Live</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --accent: #84cc16;
+      --accent-dim: #4d6d10;
+      --bg: #0a0a0a;
+      --panel: #141414;
+      --line: rgba(255,255,255,0.06);
+      --muted: rgba(255,255,255,0.55);
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red:   #ef4444;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%; margin: 0; background: var(--bg); color: white;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+      overflow: hidden;
+    }
+
+    .root {
+      display: grid;
+      grid-template-rows: 56px 1fr;
+      height: 100vh;
+    }
+
+    /* --- event log side panel --- */
+    .stage-row {
+      display: grid;
+      grid-template-columns: 1fr minmax(280px, 30vw);
+      min-height: 0;
+      height: 100%;
+      gap: 0;
+    }
+    @media (max-width: 1024px) {
+      .stage-row {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 220px;
+      }
+    }
+    .event-panel {
+      display: flex; flex-direction: column;
+      background: var(--panel);
+      border-left: 1px solid var(--line);
+      min-height: 0;
+      overflow: hidden;
+    }
+    @media (max-width: 1024px) {
+      .event-panel { border-left: none; border-top: 1px solid var(--line); }
+    }
+    .event-panel-header {
+      flex: 0 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .event-panel-header .lbl { color: var(--accent); font-weight: 700; }
+    .event-panel-header .count { color: rgba(255,255,255,0.4); }
+    .event-list {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: 8px 10px 14px 10px;
+      display: flex; flex-direction: column-reverse; /* newest on top via reverse */
+      gap: 6px;
+      scrollbar-width: thin;
+    }
+    .event-list::-webkit-scrollbar { width: 6px; }
+    .event-list::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.12); border-radius: 3px;
+    }
+    .event-empty {
+      display: flex; align-items: center; justify-content: center;
+      flex: 1; min-height: 100px;
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.32);
+      text-align: center;
+      padding: 14px;
+    }
+    .event-row {
+      display: grid;
+      grid-template-columns: auto auto 1fr;
+      gap: 8px;
+      align-items: baseline;
+      padding: 7px 10px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--line);
+      border-left: 2px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 11.5px;
+      line-height: 1.35;
+      animation: evtIn 220ms ease-out;
+    }
+    @keyframes evtIn {
+      0%   { opacity: 0; transform: translateY(-4px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .event-row .ts {
+      color: rgba(255,255,255,0.4);
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+    }
+    .event-row .scout {
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .event-row .body {
+      color: rgba(255,255,255,0.86);
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .event-row .action {
+      display: block;
+      color: rgba(255,255,255,0.92);
+    }
+    .event-row .verdict {
+      display: inline-block;
+      margin-top: 3px;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 1px 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.6);
+    }
+    .event-row.v-on-track       { border-left-color: var(--accent); }
+    .event-row.v-on-track    .verdict { background: rgba(132,204,22,0.18); color: var(--accent); }
+    .event-row.v-at-destination { border-left-color: var(--green); }
+    .event-row.v-at-destination .verdict { background: rgba(34,197,94,0.18);  color: var(--green); }
+    .event-row.v-off-track      { border-left-color: var(--red); }
+    .event-row.v-off-track  .verdict { background: rgba(239,68,68,0.18);  color: var(--red); }
+    .event-row.v-winner         { border-left-color: var(--green); background: rgba(34,197,94,0.05); }
+    .event-row.v-winner  .verdict { background: rgba(34,197,94,0.25);  color: var(--green); font-weight: 700; }
+    .event-row.v-info           { border-left-color: rgba(255,255,255,0.25); }
+    .event-row.v-info    .verdict { background: rgba(255,255,255,0.06); color: var(--muted); }
+    .event-row .reason {
+      display: block;
+      margin-top: 3px;
+      font-size: 10.5px;
+      color: rgba(255,255,255,0.5);
+      font-style: italic;
+    }
+
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 18px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      gap: 14px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .brand h1 {
+      margin: 0; font-size: 14px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); font-weight: 800;
+    }
+    .brand .sub {
+      font-size: 12px; color: var(--muted);
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+    }
+    .meta {
+      flex: 1; min-width: 0;
+      display: flex; align-items: center; gap: 18px;
+      font-size: 12px; color: rgba(255,255,255,0.7);
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      padding-left: 20px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .meta .k { color: var(--accent-dim); margin-right: 6px; }
+    .meta .seg { display: inline-flex; align-items: center; gap: 6px; }
+
+    .live {
+      display: inline-flex; align-items: center; gap: 8px; font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+    .live::before {
+      content:""; width: 9px; height: 9px; border-radius:50%; background: var(--accent);
+      box-shadow: 0 0 0 0 var(--accent); animation: pulse 1.6s infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0   rgba(132,204,22,0.55); }
+      100% { box-shadow: 0 0 0 14px rgba(132,204,22,0);    }
+    }
+
+    .stage {
+      position: relative;
+      min-height: 0;
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .grid {
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      grid-auto-rows: 1fr;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    /* Empty state */
+    .empty {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 18px;
+      pointer-events: none;
+      transition: opacity 400ms ease;
+      opacity: 1;
+    }
+    .empty.hidden { opacity: 0; }
+    .empty .dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(132,204,22,0.55);
+      animation: emptyPulse 2.4s infinite ease-out;
+    }
+    @keyframes emptyPulse {
+      0%   { box-shadow: 0 0 0 0    rgba(132,204,22,0.55); transform: scale(1); }
+      70%  { box-shadow: 0 0 0 22px rgba(132,204,22,0);    transform: scale(1.05); }
+      100% { box-shadow: 0 0 0 0    rgba(132,204,22,0);    transform: scale(1); }
+    }
+    .empty .msg {
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .empty .sub {
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+    }
+
+    .cell {
+      position: relative;
+      background: #000;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transform: scale(0.97);
+      transition: opacity 300ms ease, transform 300ms ease;
+    }
+    .cell.in {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .cell.out {
+      opacity: 0;
+      transform: scale(0.98);
+      transition: opacity 1000ms ease, transform 1000ms ease;
+    }
+    .cell img {
+      width: 100%; height: 100%; object-fit: contain;
+      background: #000;
+      image-rendering: -webkit-optimize-contrast;
+    }
+    .cell .placeholder {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.25);
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+      pointer-events: none;
+      transition: opacity 200ms ease;
+    }
+    .cell.has-frame .placeholder { opacity: 0; }
+
+    .chip {
+      position: absolute; top: 10px; left: 10px;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      z-index: 2;
+      max-width: calc(100% - 80px);
+    }
+    .chip .num {
+      color: var(--accent); font-weight: 700;
+    }
+    .chip .role {
+      color: rgba(255,255,255,0.7);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      display: inline-flex; align-items: center; gap: 8px;
+      z-index: 2;
+    }
+    .status-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--red);
+      transition: background 200ms ease;
+    }
+    .status-dot.fresh { background: var(--green); }
+    .status-dot.stale { background: var(--amber); }
+    .status-dot.dead  { background: var(--red); }
+
+    .age {
+      position: absolute; bottom: 10px; right: 12px;
+      font-size: 10px; color: rgba(255,255,255,0.45);
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      letter-spacing: 1px;
+      background: rgba(0,0,0,0.55);
+      padding: 3px 8px;
+      border-radius: 6px;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="root">
+    <div class="header">
+      <div class="brand">
+        <h1>OpenClaw Live Monitor</h1>
+        <span class="sub">Adaptive Scouts</span>
+      </div>
+      <div class="meta">
+        <span class="seg"><span class="k">COUNT</span><span id="meta-count">0</span></span>
+        <span class="seg"><span class="k">MANIFEST</span><span id="meta-updated">--</span></span>
+      </div>
+      <span class="live">Streaming</span>
+    </div>
+    <div class="stage-row">
+      <div class="stage">
+        <div class="empty" id="empty">
+          <span class="dot"></span>
+          <span class="msg">Waiting for agent to spawn scouts</span>
+          <span class="sub">Run BEAM=1 to populate the grid</span>
+        </div>
+        <div class="grid" id="grid"></div>
+      </div>
+      <aside class="event-panel" id="event-panel">
+        <div class="event-panel-header">
+          <span class="lbl">Event Log</span>
+          <span class="count" id="event-count">0 events</span>
+        </div>
+        <div class="event-list" id="event-list">
+          <div class="event-empty" id="event-empty">Waiting for agent events</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // Adaptive grid driven by /scouts/manifest.json.
+    //
+    // Manifest schema (emitted by gen-manifest.sh):
+    //   { "updatedAt": <float epoch>,
+    //     "scouts": [ {"slot":"s0","label":"S0 CMD+K SEARCH SCOUT","lastUpdateSec":<float>} ] }
+    //
+    // We DOM-diff cells against the manifest: new slots fade in (300ms),
+    // removed slots fade out (1000ms) and detach. CSS Grid auto-fit reflows
+    // automatically: 1 scout = full width, 2 = side-by-side, 3 = 3-up, 4 = 2x2,
+    // etc.
+
+    const POLL_MS = 200;
+    const FRAME_REFRESH_MS = 250; // independently refresh image src for live frames
+
+    const cells = new Map(); // slot -> { el, lastImgTick, lastLabel }
+
+    function makeCell(slot, label) {
+      const el = document.createElement('div');
+      el.className = 'cell';
+      el.dataset.slot = slot;
+
+      // Split "S0 CMD+K SEARCH SCOUT" into num + role for the chip
+      const parts = label.split(/\s+/);
+      const numText = parts[0] || slot.toUpperCase();
+      const roleText = parts.slice(1).join(' ') || 'SCOUT';
+
+      el.innerHTML = `
+        <span class="chip">
+          <span class="num"></span>
+          <span class="role"></span>
+        </span>
+        <span class="status">
+          <span class="status-dot dead"></span>
+        </span>
+        <span class="placeholder">${slot} waiting</span>
+        <img alt="" />
+        <span class="age">--</span>
+      `;
+      el.querySelector('.chip .num').textContent = numText;
+      el.querySelector('.chip .role').textContent = roleText;
+      return el;
+    }
+
+    function setStatusForCell(el, ageSec) {
+      const dot = el.querySelector('.status-dot');
+      const ageEl = el.querySelector('.age');
+      if (!dot || !ageEl) return;
+      let cls = 'dead';
+      if (ageSec < 2) cls = 'fresh';
+      else if (ageSec < 10) cls = 'stale';
+      dot.classList.remove('fresh', 'stale', 'dead');
+      dot.classList.add(cls);
+      if (!isFinite(ageSec)) {
+        ageEl.textContent = '--';
+      } else if (ageSec < 1) {
+        ageEl.textContent = (ageSec * 1000).toFixed(0) + ' ms';
+      } else {
+        ageEl.textContent = ageSec.toFixed(1) + ' s';
+      }
+    }
+
+    function refreshImage(el, slot) {
+      const img = el.querySelector('img');
+      if (!img) return;
+      img.src = '/scouts/' + slot + '/latest.jpg?t=' + Date.now();
+      el.classList.add('has-frame');
+    }
+
+    function diffCells(manifestScouts) {
+      const grid = document.getElementById('grid');
+      const seen = new Set();
+
+      for (const s of manifestScouts) {
+        seen.add(s.slot);
+        let entry = cells.get(s.slot);
+        if (!entry) {
+          const el = makeCell(s.slot, s.label);
+          grid.appendChild(el);
+          // double-RAF for transition kick-off
+          requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+          entry = { el, lastImgTick: 0, lastLabel: s.label };
+          cells.set(s.slot, entry);
+          refreshImage(el, s.slot);
+          entry.lastImgTick = Date.now();
+        } else if (entry.lastLabel !== s.label) {
+          const parts = s.label.split(/\s+/);
+          entry.el.querySelector('.chip .num').textContent = parts[0] || s.slot.toUpperCase();
+          entry.el.querySelector('.chip .role').textContent = parts.slice(1).join(' ') || 'SCOUT';
+          entry.lastLabel = s.label;
+        }
+        setStatusForCell(entry.el, s.lastUpdateSec);
+      }
+
+      // Remove cells no longer present
+      for (const [slot, entry] of cells.entries()) {
+        if (!seen.has(slot)) {
+          entry.el.classList.add('out');
+          entry.el.classList.remove('in');
+          const el = entry.el;
+          cells.delete(slot);
+          setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 1050);
+        }
+      }
+    }
+
+    function refreshAllImages() {
+      for (const [slot, entry] of cells.entries()) {
+        refreshImage(entry.el, slot);
+        entry.lastImgTick = Date.now();
+      }
+    }
+
+    function fmtUpdatedAt(updatedAt) {
+      if (!updatedAt) return '--';
+      try {
+        const ms = Math.floor(updatedAt * 1000);
+        const d = new Date(ms);
+        const pad = (n) => String(n).padStart(2, '0');
+        return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+      } catch (e) {
+        return '--';
+      }
+    }
+
+    async function pollManifest() {
+      try {
+        const r = await fetch('/scouts/manifest.json?t=' + Date.now(), { cache: 'no-store' });
+        if (!r.ok) return;
+        const data = await r.json();
+        const scouts = Array.isArray(data.scouts) ? data.scouts : [];
+        diffCells(scouts);
+
+        document.getElementById('meta-count').textContent = String(scouts.length);
+        document.getElementById('meta-updated').textContent = fmtUpdatedAt(data.updatedAt);
+
+        const emptyEl = document.getElementById('empty');
+        if (scouts.length === 0) emptyEl.classList.remove('hidden');
+        else emptyEl.classList.add('hidden');
+      } catch (e) {
+        // transient fetch error; ignore and try again next tick
+      }
+    }
+
+    setInterval(pollManifest, POLL_MS);
+    setInterval(refreshAllImages, FRAME_REFRESH_MS);
+    pollManifest();
+
+    // --- Event log poller ---------------------------------------------------
+    // Polls /scouts/events.jsonl (produced by gen-manifest.sh from log.txt).
+    // Dedupes by composite key (ts + scout + action), renders newest-on-top,
+    // caps at MAX_VISIBLE rows. Works for any scout count and degrades to
+    // empty state if the file is missing or empty.
+
+    const EVENT_POLL_MS = 1500;
+    const MAX_VISIBLE = 50;
+    const seenKeys = new Set();
+    const renderedEvents = []; // most-recent at end
+
+    function evtKey(e) {
+      return (e.ts || '') + '|' + (e.scout || '') + '|' + (e.action || '');
+    }
+
+    function makeEventRow(e) {
+      const row = document.createElement('div');
+      row.className = 'event-row v-' + (e.verdict || 'info');
+      const ts = document.createElement('span');
+      ts.className = 'ts';
+      ts.textContent = e.ts || '--:--:--';
+      const scout = document.createElement('span');
+      scout.className = 'scout';
+      scout.textContent = (e.scout && e.scout !== '-') ? e.scout.toUpperCase() : '---';
+      const body = document.createElement('span');
+      body.className = 'body';
+      const action = document.createElement('span');
+      action.className = 'action';
+      action.textContent = e.action || '';
+      body.appendChild(action);
+      const verdictTag = document.createElement('span');
+      verdictTag.className = 'verdict';
+      verdictTag.textContent = (e.verdict || 'info').replace('-', ' ');
+      body.appendChild(verdictTag);
+      if (e.reasoning && e.reasoning.trim()) {
+        const reason = document.createElement('span');
+        reason.className = 'reason';
+        reason.textContent = e.reasoning;
+        body.appendChild(reason);
+      }
+      row.appendChild(ts);
+      row.appendChild(scout);
+      row.appendChild(body);
+      return row;
+    }
+
+    function renderEvents(newEvents) {
+      const list = document.getElementById('event-list');
+      const emptyEl = document.getElementById('event-empty');
+      if (!list) return;
+      // The list is column-reverse: appending puts items at the visual TOP.
+      for (const e of newEvents) {
+        const row = makeEventRow(e);
+        list.appendChild(row);
+        renderedEvents.push({ key: evtKey(e), node: row });
+      }
+      while (renderedEvents.length > MAX_VISIBLE) {
+        const old = renderedEvents.shift();
+        if (old && old.node && old.node.parentNode) old.node.parentNode.removeChild(old.node);
+        seenKeys.delete(old.key);
+      }
+      if (emptyEl) {
+        emptyEl.style.display = renderedEvents.length ? 'none' : 'flex';
+      }
+      const countEl = document.getElementById('event-count');
+      if (countEl) {
+        countEl.textContent = renderedEvents.length + ' event' + (renderedEvents.length === 1 ? '' : 's');
+      }
+    }
+
+    async function pollEvents() {
+      try {
+        const r = await fetch('/scouts/events.jsonl?t=' + Date.now(), { cache: 'no-store' });
+        if (!r.ok) return;
+        const text = await r.text();
+        if (!text) return;
+        const lines = text.split('\n').filter((s) => s.trim().length > 0);
+        const fresh = [];
+        for (const line of lines) {
+          let evt;
+          try { evt = JSON.parse(line); } catch (_) { continue; }
+          const k = evtKey(evt);
+          if (seenKeys.has(k)) continue;
+          seenKeys.add(k);
+          fresh.push(evt);
+        }
+        if (fresh.length) renderEvents(fresh);
+      } catch (_) {
+        // transient fetch error; ignore
+      }
+    }
+
+    setInterval(pollEvents, EVENT_POLL_MS);
+    pollEvents();
+  </script>
+</body>
+</html>
