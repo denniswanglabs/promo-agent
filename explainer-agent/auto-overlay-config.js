@@ -528,7 +528,7 @@ for (const members of clusters) {
       targetCssX: cx,
       targetCssY: cy,
       anchorTSec: firstT,
-      scale: 1.4,
+      scale: 1.25,
       holdSec,
       priority: 1, // cluster — keep first
     });
@@ -538,7 +538,7 @@ for (const members of clusters) {
       targetCssX: cx,
       targetCssY: cy,
       anchorTSec: firstT,
-      scale: 1.2,
+      scale: 1.15,
       holdSec: Math.max(1.0, Math.min(2.0, tilNext - 0.8)),
       priority: 3, // lone click — first to drop
     });
@@ -577,7 +577,7 @@ for (const members of clusters) {
       targetCssX,
       targetCssY,
       anchorTSec: runStart,
-      scale: 1.15,
+      scale: 1.10,
       holdSec,
       priority: 2, // scroll — drop after lone clicks
     });
