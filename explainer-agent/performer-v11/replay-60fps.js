@@ -195,7 +195,10 @@ const CSS_H = 1440;
   // 1. Navigate to startUrl
   console.log('[performer] navigating to', log.startUrl);
   await page.goto(log.startUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await page.waitForTimeout(1500);
+  // Post-nav settle: domcontentloaded fires before React hydration, lazy
+  // images, embedded video players, and cookie banners land. Give the page
+  // 2.5s to fully render before we start the cinematic.
+  await page.waitForTimeout(2500);
   await page.evaluate(() => window.__installCursor && window.__installCursor());
   await dismissCookieBanner(page);
 
@@ -370,7 +373,11 @@ const CSS_H = 1440;
       await clickRipple(cx, cy);
       await page.mouse.click(cx, cy);
       await page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
-      await page.waitForTimeout(1200);
+      // Post-nav settle: clicks on links/buttons may navigate; domcontentloaded
+      // fires before React hydration, lazy assets, embedded players, and
+      // cookie banners. 2.5s gives the new page time to fully render so the
+      // recording doesn't capture a half-rendered UI.
+      await page.waitForTimeout(2500);
       try { visitedUrls.push(page.url()); } catch (_) {}
       await page.evaluate(() => window.__installCursor && window.__installCursor());
       await dismissCookieBanner(page);
