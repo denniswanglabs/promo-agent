@@ -185,7 +185,7 @@ async function callNemotronOmniJudge({ goal, screenshotPath }) {
         ],
       },
     ],
-    max_tokens: 4000,
+    max_tokens: 6000,
     temperature: 0.1,
     response_format: { type: 'json_object' },
     chat_template_kwargs: { enable_thinking: false },
