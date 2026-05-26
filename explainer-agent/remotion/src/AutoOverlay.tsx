@@ -1691,7 +1691,9 @@ export const AutoOverlay: React.FC = () => {
               </Sequence>
             )}
           </VideoCrop>
-          <CursorSprite inFrame />
+          {/* CursorSprite mount removed: recording (auto-base.mp4) already has
+              the DOM cursor baked in from replay-60fps.js. Overlay cursor
+              would visually double. Component definition kept for reuse. */}
         </FramedScreen>
       </CameraZoom>
 
