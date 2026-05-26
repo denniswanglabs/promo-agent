@@ -2005,13 +2005,23 @@ if (!BEAM) {
     }
 
     // 4. Execute K slots in parallel — each in its own fresh context.
-    const newContexts = await Promise.all(
-      slots.map(() => browser.newContext({ viewport: { width: 1280, height: 720 } }))
-    );
+    // Stagger context creation 75ms apart to avoid sandbox pthread_create cap
+    // when Chromium's zygote spawns 14+ renderer processes simultaneously.
+    const newContexts = [];
+    for (let _i = 0; _i < slots.length; _i++) {
+      newContexts.push(await browser.newContext({ viewport: { width: 1280, height: 720 } }));
+      if (_i < slots.length - 1) await new Promise(r => setTimeout(r, 75));
+    }
     // v21: one record-handle box per slot, mutated by attachScoutScreencast inside the executors.
     const recordHandles = slots.map(() => ({ handle: null }));
     const execStartMs = Date.now();
-    const slotResults = await Promise.all(slots.map(async (slot, i) => {
+    // Stagger scout dispatch 75ms apart — newPage()/navigation in each branch
+    // also contributes to the simultaneous-spawn process-cap thunder.
+    const _slotPromises = [];
+    for (let _si = 0; _si < slots.length; _si++) {
+      const slot = slots[_si];
+      const i = _si;
+      _slotPromises.push((async () => {
       const ctx = newContexts[i];
       const recBox = recordHandles[i];
       if (slot.kind === 'search-scout') {
@@ -2057,7 +2067,10 @@ if (!BEAM) {
         recordHandle: recBox,
       });
       return { ...res, kind: slot.kind, context: ctx, score: slot.score, description: slot.description };
-    }));
+      })());
+      if (_si < slots.length - 1) await new Promise(r => setTimeout(r, 75));
+    }
+    const slotResults = await Promise.all(_slotPromises);
     const execMs = Date.now() - execStartMs;
     log(`beam-round ${roundIdx}: executed ${slotResults.length} slots in ${execMs}ms`);
 
