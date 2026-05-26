@@ -162,6 +162,8 @@ async function callNemotronOmniJudge({ goal, screenshotPath }) {
         role: 'system',
         content:
           `You are a strict visual judge for an autonomous web-navigation agent. ` +
+          `Keep your reasoning to ≤150 words, then output the JSON. Do not write ` +
+          `prose outside the JSON object. ` +
           `Return ONLY a single valid JSON object matching the schema ` +
           `{"at_destination": boolean, "on_right_track": boolean, "reasoning": string}. ` +
           `Do not include markdown formatting, code fences, or any text outside the JSON object.`,
