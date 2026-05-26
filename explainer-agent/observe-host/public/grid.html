@@ -64,6 +64,72 @@
     }
     .event-panel-header .lbl { color: var(--accent); font-weight: 700; }
     .event-panel-header .count { color: rgba(255,255,255,0.4); }
+    .tab-toggle {
+      flex: 0 0 auto;
+      display: flex;
+      gap: 4px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0,0,0,0.25);
+    }
+    .tab-toggle button {
+      flex: 0 0 auto;
+      padding: 5px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-bottom: 2px solid transparent;
+      color: rgba(255,255,255,0.55);
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 10.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px 4px 0 0;
+      transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+    }
+    .tab-toggle button:hover {
+      color: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.06);
+    }
+    .tab-toggle button.active {
+      color: var(--accent);
+      border-bottom-color: #84cc16;
+      background: rgba(132,204,22,0.06);
+    }
+    #events-view, #raw-log-view {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    #raw-log-view { display: none; }
+    .raw-log-pre {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      margin: 0;
+      padding: 8px;
+      font-family: 'JetBrains Mono', ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      color: #c8c8c8;
+      background: #050a14;
+      white-space: pre;
+      scrollbar-width: thin;
+    }
+    .raw-log-pre::-webkit-scrollbar { width: 6px; }
+    .raw-log-pre::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.12); border-radius: 3px;
+    }
+    .raw-log-status {
+      flex: 0 0 auto;
+      display: flex; justify-content: space-between;
+      padding: 6px 10px;
+      border-top: 1px solid var(--line);
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      background: rgba(0,0,0,0.3);
+    }
     .event-list {
       flex: 1 1 auto;
       overflow-y: auto;
@@ -361,8 +427,21 @@
           <span class="lbl">Event Log</span>
           <span class="count" id="event-count">0 events</span>
         </div>
-        <div class="event-list" id="event-list">
-          <div class="event-empty" id="event-empty">Waiting for agent events</div>
+        <div class="tab-toggle" id="tab-toggle">
+          <button type="button" class="active" data-tab="events">Events</button>
+          <button type="button" data-tab="raw">Raw log</button>
+        </div>
+        <div id="events-view">
+          <div class="event-list" id="event-list">
+            <div class="event-empty" id="event-empty">Waiting for agent events</div>
+          </div>
+        </div>
+        <div id="raw-log-view">
+          <pre class="raw-log-pre" id="raw-log-pre"></pre>
+          <div class="raw-log-status">
+            <span id="raw-log-bytes">0 bytes</span>
+            <span id="raw-log-mtime">--</span>
+          </div>
         </div>
       </aside>
     </div>
@@ -610,6 +689,85 @@
 
     setInterval(pollEvents, EVENT_POLL_MS);
     pollEvents();
+
+    // --- Tab toggle ---------------------------------------------------------
+    (function initTabs() {
+      const buttons = document.querySelectorAll('#tab-toggle button');
+      const eventsView = document.getElementById('events-view');
+      const rawView = document.getElementById('raw-log-view');
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          buttons.forEach((b) => b.classList.toggle('active', b === btn));
+          const tab = btn.getAttribute('data-tab');
+          if (tab === 'raw') {
+            eventsView.style.display = 'none';
+            rawView.style.display = 'flex';
+          } else {
+            eventsView.style.display = 'flex';
+            rawView.style.display = 'none';
+          }
+        });
+      });
+    })();
+
+    // --- Raw log poller -----------------------------------------------------
+    // Polls /log.txt every 2s, renders last 200 lines into a monospace <pre>.
+    // Auto-scrolls to bottom only if the user is already pinned to the bottom
+    // (preserves scroll position when reading earlier output). Runs regardless
+    // of which tab is active so the data is fresh when switching back.
+
+    const RAW_LOG_POLL_MS = 2000;
+    const RAW_LOG_TAIL_LINES = 200;
+    const SCROLL_PIN_PX = 24; // treated as "at bottom" within this margin
+
+    function fmtBytes(n) {
+      if (n < 1024) return n + ' B';
+      if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+      return (n / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function fmtMtime(d) {
+      try {
+        const dt = new Date(d);
+        const hh = String(dt.getHours()).padStart(2, '0');
+        const mm = String(dt.getMinutes()).padStart(2, '0');
+        const ss = String(dt.getSeconds()).padStart(2, '0');
+        return hh + ':' + mm + ':' + ss;
+      } catch (_) { return '--'; }
+    }
+
+    async function pollRawLog() {
+      try {
+        const r = await fetch('/log.txt?t=' + Date.now(), { cache: 'no-store' });
+        if (!r.ok) return;
+        const text = await r.text();
+        const pre = document.getElementById('raw-log-pre');
+        const bytesEl = document.getElementById('raw-log-bytes');
+        const mtimeEl = document.getElementById('raw-log-mtime');
+        if (!pre) return;
+
+        const lines = text.split('\n');
+        const tail = lines.slice(-RAW_LOG_TAIL_LINES).join('\n');
+
+        // Detect "user is pinned to bottom" before mutating content.
+        const pinned = (pre.scrollHeight - pre.scrollTop - pre.clientHeight) <= SCROLL_PIN_PX;
+
+        pre.textContent = tail;
+
+        if (pinned) {
+          pre.scrollTop = pre.scrollHeight;
+        }
+
+        if (bytesEl) bytesEl.textContent = fmtBytes(text.length) + ' / ' + lines.length + ' lines';
+        const lm = r.headers.get('Last-Modified');
+        if (mtimeEl && lm) mtimeEl.textContent = fmtMtime(lm);
+      } catch (_) {
+        // transient fetch error; ignore
+      }
+    }
+
+    setInterval(pollRawLog, RAW_LOG_POLL_MS);
+    pollRawLog();
   </script>
 </body>
 </html>
