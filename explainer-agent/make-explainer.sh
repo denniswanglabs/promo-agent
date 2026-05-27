@@ -60,7 +60,7 @@ echo
 
 echo "[1/4] Running agent in NemoClaw sandbox..."
 ~/.local/bin/nemoclaw promo-agent exec --no-tty --timeout "$NEMOCLAW_TIMEOUT" -- bash -c \
-  "rm -rf /sandbox/explainer-agent/run && export GOAL=$(printf '%q' "$GOAL") && export START_URL=$(printf '%q' "$START_URL") && export MAX_STEPS=$MAX_STEPS && export BEAM=$BEAM && export BEAM_K=$BEAM_K && bash /sandbox/explainer-agent/run.sh" 2>&1 \
+  "rm -rf /sandbox/explainer-agent/run && export GOAL=$(printf '%q' "$GOAL") && export START_URL=$(printf '%q' "$START_URL") && export MAX_STEPS=$MAX_STEPS && export BEAM=$BEAM && export BEAM_K=$BEAM_K && export NVIDIA_API_KEY=$(printf '%q' "$NVIDIA_API_KEY") && bash /sandbox/explainer-agent/run.sh" 2>&1 \
   | grep -E '^\[' | tail -80
 
 echo

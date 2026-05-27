@@ -308,5 +308,46 @@ network_policies:
       - host: news.ycombinator.com
         port: 443
         access: full
+      # Auto-added by auto-allowlist.sh
+      - host: dashboard.stripe.com
+        port: 443
+        access: full
+      - host: marketplace.stripe.com
+        port: 443
+        access: full
+      - host: support.stripe.com
+        port: 443
+        access: full
+      # Auto-added by auto-allowlist.sh
+      - host: docs.openclaw.ai
+        port: 443
+        access: full
+      - host: cdn.docs.openclaw.ai
+        port: 443
+        access: full
+      - host: assets.docs.openclaw.ai
+        port: 443
+        access: full
+      - host: static.docs.openclaw.ai
+        port: 443
+        access: full
+      - host: fonts.docs.openclaw.ai
+        port: 443
+        access: full
+      - host: images.docs.openclaw.ai
+        port: 443
+        access: full
+      - host: www.openclaw.ai
+        port: 443
+        access: full
+      - host: cdn.openclaw.ai
+        port: 443
+        access: full
+      - host: assets.openclaw.ai
+        port: 443
+        access: full
+      - host: static.openclaw.ai
+        port: 443
+        access: full
     binaries:
       - { path: "/**" }

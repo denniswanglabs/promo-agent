@@ -1159,7 +1159,7 @@ if (!BEAM) {
       // For done-check, accept the proposer's done unconditionally (URL
       // substring match in scene-weighting still flags climactic post-hoc).
       const judge = { at_destination: true, on_right_track: true, reasoning: 'judge-disabled-v36' };
-      log(`[nemotron-omni] done-check: ${JSON.stringify(judge)}`);
+      log(`[judge-bypass] done-check: ${JSON.stringify(judge)}`);
       if (judge.at_destination) {
         const finalPath = join(OUT_DIR, 'screenshots', `step_${filteredIndex}_final.png`);
         copyFileSync(checkPath, finalPath);
@@ -1235,7 +1235,7 @@ if (!BEAM) {
 
       // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
       const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
-      log(`[nemotron-omni] judge: ${JSON.stringify(judge)}`);
+      log(`[judge-bypass] judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Scroll ${decision.scroll}`;
       const baseRec = {
@@ -1279,7 +1279,7 @@ if (!BEAM) {
         attemptIndex++;
 
         if (judge.at_destination) {
-          log(`[nemotron-omni] at_destination true after scroll — stopping with success.`);
+          log(`[judge] at_destination true after scroll — stopping with success.`);
           const finalPath = join(OUT_DIR, 'screenshots', `step_${filteredIndex}_final.png`);
           copyFileSync(afterPath, finalPath);
           filtered.push({
@@ -1292,7 +1292,7 @@ if (!BEAM) {
         }
         continue;
       } else {
-        log(`[nemotron-omni] off-track → rolling back to ${stateBefore.url} @ y=${stateBefore.scrollY}`);
+        log(`[judge] off-track → rolling back to ${stateBefore.url} @ y=${stateBefore.scrollY}`);
         attempted.push({
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
@@ -1357,7 +1357,7 @@ if (!BEAM) {
 
       // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
       const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
-      log(`[nemotron-omni] drag-judge: ${JSON.stringify(judge)}`);
+      log(`[judge-bypass] drag-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Drag (${from[0]},${from[1]}) -> (${to[0]},${to[1]})`;
       const baseRec = {
@@ -1385,7 +1385,7 @@ if (!BEAM) {
         attemptIndex++;
 
         if (judge.at_destination) {
-          log(`[nemotron-omni] at_destination true after drag — stopping with success.`);
+          log(`[judge] at_destination true after drag — stopping with success.`);
           const finalPath = join(OUT_DIR, 'screenshots', `step_${filteredIndex}_final.png`);
           copyFileSync(afterPath, finalPath);
           filtered.push({
@@ -1398,7 +1398,7 @@ if (!BEAM) {
         }
         continue;
       } else {
-        log(`[nemotron-omni] off-track after drag → recording rejection`);
+        log(`[judge] off-track after drag → recording rejection`);
         attempted.push({
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
@@ -1461,7 +1461,7 @@ if (!BEAM) {
 
       // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
       const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
-      log(`[nemotron-omni] freedraw-judge: ${JSON.stringify(judge)}`);
+      log(`[judge-bypass] freedraw-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Freedraw ${points.length}-point polyline`;
       const baseRec = {
@@ -1491,7 +1491,7 @@ if (!BEAM) {
         attemptIndex++;
 
         if (judge.at_destination) {
-          log(`[nemotron-omni] at_destination true after freedraw — stopping with success.`);
+          log(`[judge] at_destination true after freedraw — stopping with success.`);
           const finalPath = join(OUT_DIR, 'screenshots', `step_${filteredIndex}_final.png`);
           copyFileSync(afterPath, finalPath);
           filtered.push({
@@ -1504,7 +1504,7 @@ if (!BEAM) {
         }
         continue;
       } else {
-        log(`[nemotron-omni] off-track after freedraw → recording rejection`);
+        log(`[judge] off-track after freedraw → recording rejection`);
         attempted.push({
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
@@ -1540,7 +1540,7 @@ if (!BEAM) {
 
       // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
       const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
-      log(`[nemotron-omni] keyboard-judge: ${JSON.stringify(judge)}`);
+      log(`[judge-bypass] keyboard-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Press ${key}`;
       const baseRec = {
@@ -1566,7 +1566,7 @@ if (!BEAM) {
         attemptIndex++;
 
         if (judge.at_destination) {
-          log(`[nemotron-omni] at_destination true after keyboard — stopping with success.`);
+          log(`[judge] at_destination true after keyboard — stopping with success.`);
           const finalPath = join(OUT_DIR, 'screenshots', `step_${filteredIndex}_final.png`);
           copyFileSync(afterPath, finalPath);
           filtered.push({
@@ -1579,7 +1579,7 @@ if (!BEAM) {
         }
         continue;
       } else {
-        log(`[nemotron-omni] off-track after keyboard → recording rejection`);
+        log(`[judge] off-track after keyboard → recording rejection`);
         attempted.push({
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
@@ -1620,7 +1620,7 @@ if (!BEAM) {
 
       // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
       const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
-      log(`[nemotron-omni] clickAt-judge: ${JSON.stringify(judge)}`);
+      log(`[judge-bypass] clickAt-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `clickAt (${x}, ${y})`;
       const baseRec = {
@@ -1649,7 +1649,7 @@ if (!BEAM) {
         attemptIndex++;
 
         if (judge.at_destination) {
-          log(`[nemotron-omni] at_destination true after clickAt — stopping with success.`);
+          log(`[judge] at_destination true after clickAt — stopping with success.`);
           const finalPath = join(OUT_DIR, 'screenshots', `step_${filteredIndex}_final.png`);
           copyFileSync(afterPath, finalPath);
           filtered.push({
@@ -1662,7 +1662,7 @@ if (!BEAM) {
         }
         continue;
       } else {
-        log(`[nemotron-omni] off-track after clickAt → recording rejection`);
+        log(`[judge] off-track after clickAt → recording rejection`);
         attempted.push({
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
@@ -1700,7 +1700,7 @@ if (!BEAM) {
 
       // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
       const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
-      log(`[nemotron-omni] type-judge: ${JSON.stringify(judge)}`);
+      log(`[judge-bypass] type-judge: ${JSON.stringify(judge)}`);
 
       const description = decision.description || `Type "${text}"`;
       const baseRec = {
@@ -1728,7 +1728,7 @@ if (!BEAM) {
         attemptIndex++;
 
         if (judge.at_destination) {
-          log(`[nemotron-omni] at_destination true after type — stopping with success.`);
+          log(`[judge] at_destination true after type — stopping with success.`);
           const finalPath = join(OUT_DIR, 'screenshots', `step_${filteredIndex}_final.png`);
           copyFileSync(afterPath, finalPath);
           filtered.push({
@@ -1741,7 +1741,7 @@ if (!BEAM) {
         }
         continue;
       } else {
-        log(`[nemotron-omni] off-track after type → recording rejection`);
+        log(`[judge] off-track after type → recording rejection`);
         attempted.push({
           ...baseRec, attempt: attemptIndex, accepted: false,
           screenshotBefore: beforePath, screenshotAfter: afterPath,
@@ -1892,7 +1892,7 @@ if (!BEAM) {
 
     // v36: judge disabled in BEAM=0 mode — proposer drives end-to-end
     const judge = { at_destination: false, on_right_track: true, reasoning: 'judge-disabled-v36' };
-    log(`[nemotron-omni] judge: ${JSON.stringify(judge)}`);
+    log(`[judge-bypass] judge: ${JSON.stringify(judge)}`);
 
     const description = decision.description || `Click ${target.text || target.aria || target.tag}`;
     const baseRec = {
@@ -1929,7 +1929,7 @@ if (!BEAM) {
       attemptIndex++;
 
       if (judge.at_destination) {
-        log(`[nemotron-omni] at_destination true after click — stopping with success.`);
+        log(`[judge] at_destination true after click — stopping with success.`);
         const finalPath = join(OUT_DIR, 'screenshots', `step_${filteredIndex}_final.png`);
         copyFileSync(afterPath, finalPath);
         filtered.push({
@@ -1943,7 +1943,7 @@ if (!BEAM) {
       continue;
     } else {
       const landedUrl = page.url();
-      log(`[nemotron-omni] off-track → rolling back to ${stateBefore.url} @ y=${stateBefore.scrollY}`);
+      log(`[judge] off-track → rolling back to ${stateBefore.url} @ y=${stateBefore.scrollY}`);
       attempted.push({
         ...baseRec, attempt: attemptIndex, accepted: false,
         screenshotBefore: beforePath, screenshotAfter: afterPath,

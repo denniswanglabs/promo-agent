@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Explainer Agent dashboard sidecar.
+Walk dashboard sidecar.
 
 Flask app on 127.0.0.1:8082 that lets a judge (or Dennis at the booth) type a
 URL + goal, spawns tutorial-maker.sh, surfaces live progress, and serves the
@@ -16,6 +16,7 @@ import json
 import os
 import re
 import shlex
+import signal
 import subprocess
 import time
 import uuid
@@ -127,6 +128,7 @@ PHASE_LABELS = {
     "rendering": "Rendering (replay + overlay)",
     "done": "Done",
     "failed": "Failed",
+    "aborted": "Aborted",
 }
 
 
@@ -164,6 +166,130 @@ def _tail_lines(path: Path, n: int) -> list[str]:
 # ---------------------------------------------------------------------------
 
 app = Flask(__name__)
+
+
+# CORS: the merged dashboard at :8081 calls into :8082 for /api/run + status.
+# Allow any localhost origin so static pages can hit the API. Demo-only — do
+# not deploy this exposed.
+@app.after_request
+def _add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return response
+
+
+@app.route("/api/run", methods=["POST", "OPTIONS"])
+def api_run():
+    """JSON variant of /run: returns the job_id so the merged dashboard can
+    poll status inline without a redirect away from :8081."""
+    if request.method == "OPTIONS":
+        return ("", 204)
+    # Accept either form-encoded or JSON.
+    if request.is_json:
+        data = request.get_json(silent=True) or {}
+        url = (data.get("url") or "").strip()
+        goal = (data.get("goal") or "").strip()
+    else:
+        url = (request.form.get("url") or "").strip()
+        goal = (request.form.get("goal") or "").strip()
+
+    if not url or not goal:
+        return jsonify({"error": "Missing url or goal."}), 400
+    if not _is_valid_url(url):
+        return jsonify({"error": "Invalid URL (must be http/https)."}), 400
+    if len(url) > 2000 or len(goal) > 2000:
+        return jsonify({"error": "Input too long."}), 400
+    if not TUTORIAL_MAKER.exists():
+        return jsonify({"error": f"tutorial-maker.sh not found at {TUTORIAL_MAKER}."}), 500
+
+    job_id = uuid.uuid4().hex[:12]
+    log_path = _job_log(job_id)
+    mp4_path = _job_mp4(job_id)
+
+    cmd = ["bash", str(TUTORIAL_MAKER), url, goal, str(mp4_path)]
+    log_fh = open(log_path, "wb")
+    try:
+        # BEAM=0 is canonical (judge-disabled); tutorial-maker.sh defaults to
+        # BEAM=1 (broken judge-rollback). Force it on every spawn.
+        env = os.environ.copy()
+        env["BEAM"] = "0"
+        proc = subprocess.Popen(
+            cmd,
+            cwd=str(PROJECT_DIR),
+            stdout=log_fh,
+            stderr=subprocess.STDOUT,
+            stdin=subprocess.DEVNULL,
+            start_new_session=True,
+            env=env,
+        )
+    except OSError as e:
+        log_fh.close()
+        return jsonify({"error": f"Failed to spawn tutorial-maker: {e}"}), 500
+
+    meta = {
+        "job_id": job_id,
+        "url": url,
+        "goal": goal,
+        "pid": proc.pid,
+        "started_at": time.time(),
+        "cmd": " ".join(shlex.quote(c) for c in cmd),
+        "mp4": str(mp4_path),
+        "log": str(log_path),
+    }
+    _save_meta(job_id, meta)
+    return jsonify({"job_id": job_id, "status_url": url_for("api_status", job_id=job_id)})
+
+
+@app.route("/api/abort/<job_id>", methods=["POST", "OPTIONS"])
+def api_abort(job_id: str):
+    """Kill the running tutorial-maker.sh process group for a job and mark it
+    aborted in meta. Idempotent — calling on a finished job returns ok=false."""
+    if request.method == "OPTIONS":
+        return ("", 204)
+    if not _is_valid_job_id(job_id):
+        return jsonify({"error": "invalid job_id"}), 404
+    meta = _load_meta(job_id)
+    if meta is None:
+        return jsonify({"error": "job not found"}), 404
+    if meta.get("aborted"):
+        return jsonify({"ok": True, "already_aborted": True}), 200
+
+    pid = meta.get("pid")
+    if not pid:
+        return jsonify({"error": "no pid recorded"}), 500
+
+    # tutorial-maker.sh was spawned with start_new_session=True, so its PID is
+    # the process group leader. killpg sends SIGTERM to every descendant in
+    # the group — including make-explainer.sh, nemoclaw exec, ssh-proxy, etc.
+    try:
+        os.killpg(os.getpgid(pid), signal.SIGTERM)
+    except (ProcessLookupError, PermissionError) as e:
+        # Already gone, or not our child (e.g. after Flask restart). Mark
+        # aborted anyway so the UI clears.
+        meta["aborted"] = True
+        meta["aborted_at"] = time.time()
+        meta["abort_reason"] = f"signal failed: {e}"
+        _save_meta(job_id, meta)
+        return jsonify({"ok": True, "warning": str(e)}), 200
+
+    # Give it 2s to exit on SIGTERM, then SIGKILL.
+    for _ in range(20):
+        try:
+            os.kill(pid, 0)
+            time.sleep(0.1)
+        except ProcessLookupError:
+            break
+    else:
+        try:
+            os.killpg(os.getpgid(pid), signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+
+    meta["aborted"] = True
+    meta["aborted_at"] = time.time()
+    _save_meta(job_id, meta)
+    return jsonify({"ok": True}), 200
 
 
 @app.route("/")
@@ -205,6 +331,11 @@ def run_job():
 
     log_fh = open(log_path, "wb")
     try:
+        # BEAM=0 is canonical (judge-disabled); tutorial-maker.sh defaults to
+        # BEAM=1 (broken judge-rollback). Force it on every spawn. (Matches
+        # the same fix on /api/run above — both code paths must stay aligned.)
+        env = os.environ.copy()
+        env["BEAM"] = "0"
         proc = subprocess.Popen(
             cmd,
             cwd=str(PROJECT_DIR),
@@ -212,6 +343,7 @@ def run_job():
             stderr=subprocess.STDOUT,
             stdin=subprocess.DEVNULL,
             start_new_session=True,
+            env=env,
         )
     except OSError as e:
         log_fh.close()
@@ -281,8 +413,12 @@ def api_status(job_id: str):
     log_text = "\n".join(tail_lines)
     phase = _infer_phase(log_text, mp4_exists, proc_alive)
 
+    # If /api/abort marked this job aborted, override phase.
+    if meta.get("aborted"):
+        phase = "aborted"
+
     # Detect explicit failure: process exited without producing the mp4.
-    if not proc_alive and not mp4_exists and tail_lines:
+    if phase != "aborted" and not proc_alive and not mp4_exists and tail_lines:
         # Walk backwards for FAILED markers.
         joined = log_text.lower()
         if (
@@ -306,7 +442,12 @@ def api_status(job_id: str):
             "elapsed_sec": elapsed_sec,
             "proc_alive": proc_alive,
             "mp4_exists": mp4_exists,
-            "last_log_lines": tail_lines[-20:] if phase == "failed" else tail_lines[-5:],
+            # Was -5 during running / -20 on failure — that hid agent history
+            # behind a 5-line ceiling and only showed the full tail on page
+            # reload (because the static log.txt fallback briefly ran). Send
+            # the full 100-line tail every poll so the side panel can render
+            # the running agent's whole trajectory without a refresh.
+            "last_log_lines": tail_lines[-100:],
             "output_mp4": (
                 url_for("api_result", job_id=job_id) if mp4_exists else None
             ),
@@ -342,7 +483,7 @@ def api_health():
 
 if __name__ == "__main__":
     # Bind localhost-only. No auth.
-    print("Explainer Agent dashboard → http://127.0.0.1:8082")
+    print("Walk dashboard → http://127.0.0.1:8082")
     print(f"  tutorial-maker: {TUTORIAL_MAKER}")
     print(f"  jobs dir:       {JOBS_DIR}")
     app.run(host="127.0.0.1", port=8082, debug=False, use_reloader=False)

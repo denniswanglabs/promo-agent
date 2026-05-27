@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M0,0 L12,6 L0,12 z" fill="#52525b"/>
+    </marker>
+    <marker id="arrowLime" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M0,0 L12,6 L0,12 z" fill="#84cc16"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M0,0 L12,6 L0,12 z" fill="#76b900"/>
+    </marker>
+    <linearGradient id="agentLoopGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#84cc16" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#84cc16" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="#0a0a0a"/>
+
+  <!-- Subtle grid for depth -->
+  <g opacity="0.04" stroke="#84cc16" stroke-width="0.5">
+    <line x1="0" y1="270" x2="1920" y2="270"/>
+    <line x1="0" y1="540" x2="1920" y2="540"/>
+    <line x1="0" y1="810" x2="1920" y2="810"/>
+    <line x1="640" y1="0" x2="640" y2="1080"/>
+    <line x1="1280" y1="0" x2="1280" y2="1080"/>
+  </g>
+
+  <!-- =================== HEADER =================== -->
+  <text x="80" y="78" font-size="44" font-weight="800" fill="#fafafa" letter-spacing="-1">Walk</text>
+  <text x="80" y="116" font-size="20" font-weight="500" fill="#a1a1aa">Autonomous browser agent. Powered by Nemotron-3-Super-120B. Secured by NemoClaw policy guardrails.</text>
+
+  <!-- Header right: rubric checkmarks (two-line layout so text never crowds the border) -->
+  <g transform="translate(1300, 50)">
+    <rect width="540" height="74" rx="10" fill="#18181b" stroke="#84cc16" stroke-width="1" opacity="0.95"/>
+    <text x="20" y="24" font-size="11" font-weight="700" fill="#84cc16" letter-spacing="1.5">HACKATHON RUBRIC</text>
+    <text x="20" y="46" font-size="12" font-weight="500" fill="#e4e4e7">Autonomous · Nemotron · Real task</text>
+    <text x="20" y="64" font-size="12" font-weight="500" fill="#e4e4e7">Deployable · Custom framework · NemoClaw guardrails</text>
+  </g>
+
+  <!-- Divider under header -->
+  <line x1="80" y1="148" x2="1840" y2="148" stroke="#27272a" stroke-width="1"/>
+
+  <!-- =================== COLUMN HEADERS =================== -->
+  <g transform="translate(80, 178)">
+    <rect width="820" height="44" rx="8" fill="#18181b" stroke="#3f3f46" stroke-width="1"/>
+    <circle cx="22" cy="22" r="5" fill="#84cc16"/>
+    <text x="40" y="28" font-size="16" font-weight="700" fill="#fafafa" letter-spacing="0.5">YOUR MAC</text>
+    <text x="140" y="28" font-size="13" font-weight="400" fill="#a1a1aa">host orchestration · video rendering</text>
+  </g>
+
+  <g transform="translate(1020, 178)">
+    <rect width="820" height="44" rx="8" fill="#18181b" stroke="#76b900" stroke-width="1"/>
+    <circle cx="22" cy="22" r="5" fill="#76b900"/>
+    <text x="40" y="28" font-size="16" font-weight="700" fill="#fafafa" letter-spacing="0.5">NEMOCLAW SANDBOX</text>
+    <text x="200" y="28" font-size="13" font-weight="400" fill="#a1a1aa">policy-secured · network + kernel + fs guardrails</text>
+  </g>
+
+  <!-- =================== STEP 1: tutorial-maker.sh =================== -->
+  <g transform="translate(80, 250)">
+    <rect width="380" height="84" rx="10" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+    <circle cx="34" cy="42" r="20" fill="#84cc16"/>
+    <text x="34" y="49" text-anchor="middle" font-size="22" font-weight="800" fill="#0a0a0a">1</text>
+    <text x="74" y="35" font-size="18" font-weight="700" fill="#fafafa">tutorial-maker.sh</text>
+    <text x="74" y="58" font-size="13" font-weight="500" fill="#84cc16">bash orchestrator</text>
+    <text x="74" y="75" font-size="12" fill="#a1a1aa">URL + goal in → MP4 out</text>
+  </g>
+
+  <!-- arrow Step 1 → Step 2 -->
+  <line x1="270" y1="334" x2="270" y2="370" stroke="#52525b" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <!-- =================== STEP 2: allowlist =================== -->
+  <g transform="translate(80, 374)">
+    <rect width="380" height="84" rx="10" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+    <circle cx="34" cy="42" r="20" fill="#84cc16"/>
+    <text x="34" y="49" text-anchor="middle" font-size="22" font-weight="800" fill="#0a0a0a">2</text>
+    <text x="74" y="35" font-size="18" font-weight="700" fill="#fafafa">allowlist target domain</text>
+    <text x="74" y="58" font-size="13" font-weight="500" fill="#84cc16">nemoclaw policy-add</text>
+    <text x="74" y="75" font-size="12" fill="#a1a1aa">writes the YAML, applies to sandbox</text>
+  </g>
+
+  <!-- arrow Step 2 → Sandbox (cross-column) -->
+  <path d="M 460 416 L 1020 416" stroke="#52525b" stroke-width="1.8" fill="none" marker-end="url(#arrow)" stroke-dasharray="4 4"/>
+  <text x="740" y="408" text-anchor="middle" font-size="11" font-weight="600" fill="#a1a1aa" letter-spacing="0.5">POLICY APPLIED</text>
+
+  <!-- =================== STEP 3: launch agent =================== -->
+  <g transform="translate(80, 498)">
+    <rect width="380" height="84" rx="10" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+    <circle cx="34" cy="42" r="20" fill="#84cc16"/>
+    <text x="34" y="49" text-anchor="middle" font-size="22" font-weight="800" fill="#0a0a0a">3</text>
+    <text x="74" y="35" font-size="18" font-weight="700" fill="#fafafa">launch agent in sandbox</text>
+    <text x="74" y="58" font-size="13" font-weight="500" fill="#84cc16">nemoclaw exec</text>
+    <text x="74" y="75" font-size="12" fill="#a1a1aa">hands the goal to agent.js</text>
+  </g>
+
+  <!-- arrow Step 3 → agent.js (cross-column) -->
+  <path d="M 460 540 L 1020 540" stroke="#84cc16" stroke-width="2" fill="none" marker-end="url(#arrowLime)"/>
+  <text x="740" y="532" text-anchor="middle" font-size="11" font-weight="600" fill="#84cc16" letter-spacing="0.5">GOAL DISPATCHED</text>
+
+  <!-- =================== AGENT LOOP BOX (right column, big feature) =================== -->
+  <g transform="translate(1020, 250)">
+    <!-- outer container with subtle glow -->
+    <rect width="820" height="464" rx="14" fill="url(#agentLoopGlow)" stroke="#84cc16" stroke-width="2"/>
+
+    <!-- Title strip -->
+    <rect width="820" height="48" rx="14" fill="#84cc16"/>
+    <rect y="36" width="820" height="12" fill="#84cc16"/>
+    <text x="24" y="32" font-size="16" font-weight="800" fill="#0a0a0a" letter-spacing="1">agent.js  ·  custom Node.js loop  ·  YOUR IP</text>
+    <text x="800" y="32" text-anchor="end" font-size="12" font-weight="600" fill="#0a0a0a" opacity="0.75">/sandbox/explainer-agent/agent.js</text>
+
+    <!-- Loop diagram -->
+    <g transform="translate(40, 80)">
+      <text x="0" y="20" font-size="13" font-weight="700" fill="#84cc16" letter-spacing="1">AUTONOMOUS LOOP  ·  no human in the loop</text>
+
+      <!-- Three loop steps in a row -->
+      <!-- Step A: screenshot -->
+      <g transform="translate(0, 40)">
+        <rect width="220" height="120" rx="10" fill="#18181b" stroke="#3f3f46" stroke-width="1"/>
+        <text x="110" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="#a1a1aa" letter-spacing="2">STEP A</text>
+        <text x="110" y="62" text-anchor="middle" font-size="18" font-weight="700" fill="#fafafa">screenshot</text>
+        <text x="110" y="86" text-anchor="middle" font-size="13" fill="#a1a1aa">capture current page</text>
+        <text x="110" y="104" text-anchor="middle" font-size="13" fill="#a1a1aa">+ a11y tree</text>
+      </g>
+
+      <!-- arrow A → B -->
+      <path d="M 224 100 L 256 100" stroke="#84cc16" stroke-width="2.5" fill="none" marker-end="url(#arrowLime)"/>
+
+      <!-- Step B: Nemotron -->
+      <g transform="translate(260, 40)">
+        <rect width="220" height="120" rx="10" fill="#76b900" stroke="#5a8e00" stroke-width="1.5"/>
+        <text x="110" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="#0a0a0a" letter-spacing="2">STEP B</text>
+        <text x="110" y="62" text-anchor="middle" font-size="18" font-weight="800" fill="#0a0a0a">Nemotron-3</text>
+        <text x="110" y="80" text-anchor="middle" font-size="18" font-weight="800" fill="#0a0a0a">Super-120B</text>
+        <text x="110" y="104" text-anchor="middle" font-size="13" font-weight="600" fill="#0a0a0a">"what should I click?"</text>
+      </g>
+
+      <!-- arrow B → C -->
+      <path d="M 484 100 L 516 100" stroke="#84cc16" stroke-width="2.5" fill="none" marker-end="url(#arrowLime)"/>
+
+      <!-- Step C: act -->
+      <g transform="translate(520, 40)">
+        <rect width="220" height="120" rx="10" fill="#18181b" stroke="#3f3f46" stroke-width="1"/>
+        <text x="110" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="#a1a1aa" letter-spacing="2">STEP C</text>
+        <text x="110" y="58" text-anchor="middle" font-size="18" font-weight="700" fill="#fafafa">execute action</text>
+        <text x="110" y="80" text-anchor="middle" font-size="11" fill="#a1a1aa">click · scroll · type · keyboard</text>
+        <text x="110" y="96" text-anchor="middle" font-size="11" fill="#a1a1aa">drag · freedraw · clickAt · done</text>
+      </g>
+
+      <!-- Loop arrow back from C → A -->
+      <path d="M 630 168 L 630 200 L 110 200 L 110 168" stroke="#84cc16" stroke-width="2.5" fill="none" marker-end="url(#arrowLime)" stroke-dasharray="8 4"/>
+      <text x="370" y="216" text-anchor="middle" font-size="13" font-weight="700" fill="#84cc16" letter-spacing="1.5">↺  REPEAT UNTIL GOAL REACHED</text>
+    </g>
+
+    <!-- Nemotron NIM callout (out-of-sandbox brain) -->
+    <g transform="translate(40, 320)">
+      <rect width="740" height="124" rx="10" fill="#0a0a0a" stroke="#76b900" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <text x="20" y="26" font-size="12" font-weight="700" fill="#76b900" letter-spacing="2">BRAIN  ·  NVIDIA NIM CLOUD</text>
+      <text x="20" y="54" font-size="15" font-weight="700" fill="#fafafa">Agent calls NIM directly from inside the sandbox</text>
+      <text x="20" y="80" font-size="12" fill="#a1a1aa">NemoClaw policy gates outbound traffic — only NIM + allowlisted target sites permitted</text>
+      <text x="20" y="104" font-size="12" font-weight="600" fill="#76b900">integrate.api.nvidia.com/v1  ·  nvidia/nemotron-3-super-120b-a12b</text>
+    </g>
+  </g>
+
+  <!-- =================== AGENT WRITES ACTION LOG (back to host) =================== -->
+  <g transform="translate(1020, 738)">
+    <rect width="820" height="64" rx="10" fill="#fef3c7" stroke="#a16207" stroke-width="1.5"/>
+    <text x="410" y="28" text-anchor="middle" font-size="16" font-weight="800" fill="#451a03">action-log.json</text>
+    <text x="410" y="50" text-anchor="middle" font-size="13" fill="#78350f">every screenshot · every click · every scroll · the agent's full trajectory</text>
+  </g>
+
+  <!-- arrow action-log → host (back across) -->
+  <path d="M 1020 770 L 460 770" stroke="#a16207" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="740" y="762" text-anchor="middle" font-size="11" font-weight="600" fill="#a16207" letter-spacing="0.5">TRAJECTORY PULLED BACK</text>
+
+  <!-- =================== STEP 4: render canonical =================== -->
+  <g transform="translate(80, 738)">
+    <rect width="380" height="84" rx="10" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+    <circle cx="34" cy="42" r="20" fill="#84cc16"/>
+    <text x="34" y="49" text-anchor="middle" font-size="22" font-weight="800" fill="#0a0a0a">4</text>
+    <text x="74" y="35" font-size="18" font-weight="700" fill="#fafafa">Remotion render</text>
+    <text x="74" y="58" font-size="13" font-weight="500" fill="#84cc16">canonical composition · 539 LOC</text>
+    <text x="74" y="75" font-size="12" fill="#a1a1aa">screenshots + cursor → 1920×1080 @ 30fps</text>
+  </g>
+
+  <!-- arrow Step 4 → Step 5 -->
+  <line x1="270" y1="822" x2="270" y2="858" stroke="#52525b" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <!-- =================== STEP 5: deliver =================== -->
+  <g transform="translate(80, 862)">
+    <rect width="380" height="84" rx="10" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+    <circle cx="34" cy="42" r="20" fill="#84cc16"/>
+    <text x="34" y="49" text-anchor="middle" font-size="22" font-weight="800" fill="#0a0a0a">5</text>
+    <text x="74" y="35" font-size="18" font-weight="700" fill="#fafafa">deliver canonical MP4</text>
+    <text x="74" y="58" font-size="13" font-weight="500" fill="#84cc16">tutorial-maker → $OUT</text>
+    <text x="74" y="75" font-size="12" fill="#a1a1aa">dashboard auto-plays in &lt;video&gt; element</text>
+  </g>
+
+  <!-- arrow Step 5 → final output -->
+  <line x1="460" y1="904" x2="510" y2="904" stroke="#84cc16" stroke-width="2.5" marker-end="url(#arrowLime)"/>
+
+  <!-- Final output bubble -->
+  <g transform="translate(514, 862)">
+    <rect width="386" height="84" rx="10" fill="#0a0a0a" stroke="#84cc16" stroke-width="2"/>
+    <text x="193" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#84cc16" letter-spacing="2">OUTPUT</text>
+    <text x="193" y="68" text-anchor="middle" font-size="22" font-weight="800" fill="#fafafa">tutorial.mp4</text>
+  </g>
+
+  <!-- =================== FOOTER: 4 NVIDIA TOUCHPOINTS =================== -->
+  <!-- Boxes widened to 250 with 10px gaps so the longest labels never crowd the border. -->
+  <g transform="translate(80, 985)">
+    <text x="0" y="14" font-size="11" font-weight="700" fill="#76b900" letter-spacing="2">FOUR NVIDIA PRODUCTS IN ONE LOOP</text>
+    <g transform="translate(0, 28)">
+      <rect width="250" height="56" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1"/>
+      <text x="14" y="22" font-size="11" font-weight="700" fill="#76b900">01  NEMOTRON-3-SUPER-120B</text>
+      <text x="14" y="42" font-size="11" fill="#a1a1aa">action selection · reasoning</text>
+    </g>
+    <g transform="translate(260, 28)">
+      <rect width="250" height="56" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1"/>
+      <text x="14" y="22" font-size="11" font-weight="700" fill="#76b900">02  NVIDIA NIM</text>
+      <text x="14" y="42" font-size="11" fill="#a1a1aa">inference endpoint</text>
+    </g>
+    <g transform="translate(520, 28)">
+      <rect width="250" height="56" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1"/>
+      <text x="14" y="22" font-size="11" font-weight="700" fill="#76b900">03  NEMOCLAW SANDBOX</text>
+      <text x="14" y="42" font-size="11" fill="#a1a1aa">network · kernel · fs guardrails</text>
+    </g>
+    <g transform="translate(780, 28)">
+      <rect width="250" height="56" rx="6" fill="#18181b" stroke="#27272a" stroke-width="1"/>
+      <text x="14" y="22" font-size="11" font-weight="700" fill="#76b900">04  NEMOTRON-3-NANO-OMNI</text>
+      <text x="14" y="42" font-size="11" fill="#a1a1aa">visual judge · standby (BEAM=1)</text>
+    </g>
+  </g>
+
+  <!-- Bottom-right tag -->
+  <text x="1840" y="1010" text-anchor="end" font-size="11" font-weight="600" fill="#52525b" letter-spacing="1.5">GTC TAIPEI 2026  ·  NVIDIA NEMOTRON HACKATHON</text>
+  <text x="1840" y="1028" text-anchor="end" font-size="11" font-weight="500" fill="#52525b">Built solo  ·  ~24h compute · ~3000 commits</text>
+</svg>

@@ -133,7 +133,7 @@ ls -lt ~/Downloads/explainer-* ~/Downloads/yc-* 2>/dev/null | head -10
 
 ## 3. Infrastructure stood up today
 
-- **Dashboard `:8082`** — Flask sidecar at `explainer-agent/observe-host/dashboard/`. Form for URL+goal → spawns `tutorial-maker.sh` → live progress page → MP4 download. Removes Claude from the live-demo path. Start: `bash explainer-agent/observe-host/dashboard/launch.sh`. **PID 54649 may already be running** — check before re-launching.
+- **Dashboard `:8082`** — Flask sidecar at `explainer-agent/observe-host/dashboard/`. JSON API `/api/run` + status polling + MP4 download. Removes Claude from the live-demo path. Start: `bash explainer-agent/observe-host/dashboard/launch.sh` (or `nohup python3 server.py &` directly). **As of 2026-05-27 12:03, PID 3263 is running the fully-patched server** — `/api/run` (demo path) AND `/run` (legacy) both force BEAM=0 on spawn. CORS is wildcard so the merged `:8081` dashboard can call into it. Verified live: `/api/health` returns 200 and CORS preflight returns 204 with `Access-Control-Allow-Origin: *`.
 
 - **Grid `:8081/grid.html`** — multi-scout dashboard. NEW right-side event panel (commit `d78bc31`) + NEW raw-log tab toggle (commit `f997842`). Backed by `gen-manifest.sh` (writes `events.jsonl` from `log.txt`) + `poll-scouts.sh` (mirrors `/sandbox/.../scout-frames/r*_s*/f*.jpg` to host).
 

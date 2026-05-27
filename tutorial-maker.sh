@@ -76,6 +76,40 @@ if [ "$AGENT_EXIT" -ne 0 ]; then
   tail -20 "$WORKDIR/agent.log"
 fi
 
+# CANONICAL EXPLAINER PATH: if make-explainer.sh's inner Remotion render
+# produced an `out-*.mp4` (Explainer composition — the style Dennis confirmed
+# as canonical in `feedback_canonical_explainer_agent_video_format`), copy it
+# to $OUT and exit. Skip Steps 3-4 (AutoOverlay) entirely. Falls through to
+# the AutoOverlay path only if the Explainer render didn't succeed.
+#
+# IMPORTANT: this grep pipeline returns non-zero exit when there's no match,
+# which `set -euo pipefail` propagates and silently kills the whole script.
+# Wrap with set +e / set -e or trail with `|| true` to keep tutorial-maker
+# alive when make-explainer's Remotion step fails.
+set +e
+EXPLAINER_OUT=$(grep "^DONE. Video: " "$WORKDIR/agent.log" 2>/dev/null | tail -1 | sed 's/^DONE. Video: //')
+set -e
+if [ -n "$EXPLAINER_OUT" ] && [ -s "$EXPLAINER_OUT" ]; then
+  echo "[tutorial-maker] Canonical Explainer render found: $EXPLAINER_OUT"
+  cp "$EXPLAINER_OUT" "$OUT"
+  echo
+  echo "============================================================"
+  echo "[tutorial-maker] DONE  (canonical Explainer composition)"
+  echo "  Output:  $OUT"
+  if command -v ffprobe >/dev/null 2>&1; then
+    ffprobe -v error -select_streams v -show_entries stream=avg_frame_rate,width,height,duration "$OUT" 2>&1 \
+      | grep -E "width|height|duration|frame_rate" \
+      | sed 's/^/  /'
+  fi
+  SIZE=$(ls -la "$OUT" | awk '{print $5}')
+  echo "  Size:    $SIZE bytes"
+  echo "  Workdir: $WORKDIR"
+  echo "============================================================"
+  exit 0
+fi
+
+echo "[tutorial-maker] No canonical Explainer output found — falling back to AutoOverlay (Steps 3-4)."
+
 # Pull action-log (always — partial data is informative).
 "$NEMOCLAW" promo-agent exec --no-tty -- cat /sandbox/explainer-agent/run/action-log.json \
   > "$WORKDIR/action-log.json" 2>/dev/null || echo '{"actions":[]}' > "$WORKDIR/action-log.json"
